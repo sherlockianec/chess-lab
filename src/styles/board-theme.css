@@ -1,0 +1,85 @@
+/**
+ * A from-scratch board theme for Chessground, using the same square/state class
+ * names as the library's own bundled themes (see chessground.brown.css for
+ * reference) but Chess Lab's own palette. The checkerboard itself is a pure CSS
+ * conic-gradient rather than a baked SVG, so it stays crisp at any board size and
+ * the two square colors can be tuned from one place via CSS variables.
+ */
+
+cg-board {
+  background-color: var(--board-light);
+  background-image: conic-gradient(
+    var(--board-dark) 90deg,
+    var(--board-light) 90deg 180deg,
+    var(--board-dark) 180deg 270deg,
+    var(--board-light) 270deg
+  );
+  /* One tile = a 2x2 square block; four tiles across/down covers the 8x8 board. */
+  background-size: 25% 25%;
+}
+
+cg-board square.move-dest {
+  background: radial-gradient(rgba(58, 140, 130, 0.65) 20%, rgba(58, 140, 130, 0.65) 0, rgba(0, 0, 0, 0.28) 0, transparent 0);
+  background-size: 42% 42%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+cg-board square.oc.move-dest {
+  background: radial-gradient(transparent 0%, transparent 78%, rgba(58, 140, 130, 0.55) 80%);
+}
+cg-board square.move-dest:hover,
+cg-board square.move-dest.hover {
+  background: rgba(58, 140, 130, 0.35);
+}
+
+cg-board square.premove-dest {
+  background: radial-gradient(rgba(90, 100, 190, 0.5) 22%, #4a55b8 0, rgba(0, 0, 0, 0.3) 0, transparent 0);
+}
+cg-board square.oc.premove-dest {
+  background: radial-gradient(transparent 0%, transparent 80%, rgba(90, 100, 190, 0.35) 80%);
+}
+cg-board square.premove-dest:hover,
+cg-board square.premove-dest.hover {
+  background: rgba(90, 100, 190, 0.25);
+}
+
+cg-board square.last-move {
+  background-color: rgba(201, 168, 100, 0.5);
+}
+cg-board square.selected {
+  background-color: rgba(201, 168, 100, 0.65);
+}
+cg-board square.current-premove {
+  background-color: rgba(90, 100, 190, 0.5);
+}
+cg-board square.check {
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 40, 20, 1) 0%,
+    rgba(220, 20, 10, 1) 25%,
+    rgba(160, 0, 0, 0) 89%,
+    rgba(150, 0, 0, 0) 100%
+  );
+}
+
+/* Rank/file coordinate labels drawn inside the two edge squares — alternate to
+   stay legible against both the light and dark square underneath them. */
+.orientation-white .ranks :nth-child(odd),
+.orientation-white .files :nth-child(even),
+.orientation-black .ranks :nth-child(even),
+.orientation-black .files :nth-child(odd),
+coords.squares:nth-of-type(odd) :nth-child(even),
+coords.squares:nth-of-type(even) :nth-child(odd) {
+  color: var(--board-dark);
+  opacity: 0.85;
+}
+
+.orientation-white .ranks :nth-child(even),
+.orientation-white .files :nth-child(odd),
+.orientation-black .ranks :nth-child(odd),
+.orientation-black .files :nth-child(even),
+coords.squares:nth-of-type(odd) :nth-child(odd),
+coords.squares:nth-of-type(even) :nth-child(even) {
+  color: var(--board-light);
+  opacity: 0.9;
+}
