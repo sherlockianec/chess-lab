@@ -104,5 +104,35 @@ export function useStockfish() {
 
   const clearEvaluation = useCallback(() => setEvaluation(null), [])
 
-  return { status, errorMessage, thinking, evaluation, requestMove, analyze, clearEvaluation, stop, newGame }
+  /**
+   * Analyze one position and resolve with its final { cp } | { mate } | null once
+   * the search completes — used by game review to walk through a whole game's
+   * worth of positions one at a time. Deliberately doesn't touch `evaluation`/
+   * `thinking` (that state describes the *live* game, not a review session), so
+   * this can safely run while nothing else is using the engine.
+   */
+  const evaluatePosition = useCallback((fen, turn, movetimeMs = 400) => {
+    const client = clientRef.current
+    if (!client) return Promise.resolve(null)
+    let lastEval = null
+    return client
+      .search(fen, { movetime: movetimeMs, depth: 16 }, (info) => {
+        const ev = scoreToWhitePerspective(info, turn)
+        if (ev) lastEval = ev
+      })
+      .then(() => lastEval)
+  }, [])
+
+  return {
+    status,
+    errorMessage,
+    thinking,
+    evaluation,
+    requestMove,
+    analyze,
+    evaluatePosition,
+    clearEvaluation,
+    stop,
+    newGame,
+  }
 }

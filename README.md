@@ -2,8 +2,9 @@
 
 A small, personal, static chess web app: edit any position (like a Lichess-style
 board editor), then play it out against a real Stockfish engine running entirely
-in your browser. No backend, no accounts, no build-time secrets — it's just static
-files, deployable to GitHub Pages for free.
+in your browser — plus game review with an evaluation graph, PGN import/export,
+light/dark themes, and an original Central-Asian-inspired piece set. No backend,
+no accounts, deployable to GitHub Pages for free.
 
 - **Board & rules:** [Chessground](https://github.com/lichess-org/chessground) +
   [chess.js](https://github.com/jhlywa/chess.js)
@@ -41,22 +42,57 @@ This repo already includes a GitHub Actions workflow
 No manual `gh-pages` branch or `npm run deploy` step needed — every push to
 `main` redeploys automatically.
 
+> **First deploy failing with "Failed to create deployment... Ensure GitHub
+> Pages has been enabled"?** This happens if the workflow's first run started
+> *before* you flipped Pages' source to "GitHub Actions" in step 2. It's a
+> one-time hiccup — go to the **Actions** tab and re-run the failed workflow
+> (or just push again); it'll succeed now that Pages is actually enabled.
+
+## Features
+
+- **Position editor** — drag pieces from the palette onto the board, or tap a
+  piece then tap a square to place it without dragging; drag pieces off the
+  board (or use the eraser) to remove them. Side to move, castling rights, and
+  the en passant square are all editable, with castling rights automatically
+  recalculated from where the kings and rooks actually are as you edit.
+- **Play against Stockfish** — choose White, Black, or watch it play both
+  sides; six named difficulty tiers plus a fully manual Custom mode; adjustable
+  thinking time; standard or custom clocks, or no clock at all.
+- **Game review** — after a game ends (or by pasting in any PGN), step through
+  every move with a live evaluation graph, click any point on the graph or any
+  move in the list to jump there.
+- **PGN import/export** — copy a finished (or in-progress) game as PGN to share
+  it elsewhere, or paste one in to review it.
+- **Light and dark themes**, plus a choice of two piece sets: the standard
+  Lichess/cburnett set, or an original "Uzbek Lab" set (see below).
+
 ## How the pieces fit together
 
 ```
 src/
   lib/                   Framework-free logic: FEN handling, position validation,
-                          difficulty -> UCI-option mapping, time control math,
-                          UCI line parsing, and the raw Stockfish Worker client.
+                          castling-rights derivation, difficulty -> UCI-option
+                          mapping, time control math, PGN build/parse, UCI line
+                          parsing, and the raw Stockfish Worker client.
   hooks/                  useChessGame   - move history, undo/redo, game-over detection
                           useStockfish   - engine lifecycle, move requests, eval
                           useClock       - the two-sided chess clock
+                          useGameReview  - game-review navigation + per-move evals
                           useLocalStorage
   components/             Presentational React components (the board itself,
                           piece palette, editor/player/difficulty/timer panels,
-                          move list, eval bar, clocks, promotion picker, ...)
-  App.jsx                 Wires the above together: owns the setup/playing phase,
-                          and decides when it's the engine's turn to move.
+                          move list, eval bar/graph, clocks, promotion picker,
+                          game-over modal, game review panel, PGN import, ...)
+  App.jsx                 Wires the above together: owns the setup/playing/review
+                          phases, and decides when it's the engine's turn to move.
+  assets/uzbek-pieces/    Source SVGs for the "Uzbek Lab" piece set.
+  styles/                 Chessground's structural CSS, both piece-set stylesheets,
+                          and the custom board theme.
+scripts/
+  build-uzbek-pieces.mjs  Regenerates the Uzbek piece SVGs + their CSS. Edit the
+                          shape functions in this script (or hand-edit the SVGs
+                          in src/assets/uzbek-pieces/ directly), then run
+                          `node scripts/build-uzbek-pieces.mjs`.
 public/engine/            The Stockfish WASM binary - see the README.md in that
                           folder for exactly which build this is and how to swap it.
 ```
@@ -89,16 +125,33 @@ rating, and the UI says so.
 **Maximum** difficulty turns strength-limiting off entirely and just gives the
 engine more time/depth — it is not artificially held back.
 
+### Game review
+
+Reviewing a game — reached from the game-over dialog's "Analyze game" button, or
+by pasting a PGN in on the setup screen — loads every position in that game and
+asks Stockfish for a quick (capped-depth, ~400ms) evaluation of each one in the
+background, filling in the graph progressively as they come back. Clicking
+anywhere on the graph, or any move in the list, jumps the board to that point.
+This reuses the same engine Worker as live play; nothing extra to load.
+
+### The "Uzbek Lab" piece set
+
+An original, minimalist piece set (not a reskin of an existing one) drawing on
+Central Asian / Timurid visual motifs rather than the usual Staunton silhouette:
+a domed king and star finials, a scalloped crown for the queen, a
+muqarnas-crenellated fortress tower for the rook, a horse-head knight, and —
+since this square was historically an elephant (*alfil*) in the Persian/Central
+Asian chess tradition rather than a bishop — small tusk-curls on that piece. It's
+a first pass at a hard, subjective design brief; the shape-generating code is in
+`scripts/build-uzbek-pieces.mjs` if you'd like to push the style further.
+
 ### The position editor
 
-Works like Lichess's board editor: drag pieces from the palette onto the board,
-drag existing pieces around or off the board to remove them, or use the eraser
-tool. Side to move, castling rights, and the en passant square are edited
-directly, and the whole thing round-trips through a plain FEN string you can
-copy or paste. Before a game starts, the position is validated with chess.js
-(which already rejects most illegal setups — missing/duplicate kings, pawns on
-the back rank, malformed FEN, ...); this app adds one more check chess.js
-doesn't do itself, that the side *not* to move isn't already in check.
+Works like Lichess's board editor. Before a game starts, the position is
+validated with chess.js (which already rejects most illegal setups —
+missing/duplicate kings, pawns on the back rank, malformed FEN, ...); this app
+adds one more check chess.js doesn't do itself, that the side *not* to move
+isn't already in check.
 
 ## Known scope decisions
 
@@ -108,20 +161,21 @@ rather than half-finishing more:
 - **Settings and the last edited position** are saved to `localStorage`, but a
   game *in progress* is not resumed across a page reload — reloading mid-game
   returns you to the setup screen with your last settings intact, not to the
-  live board. Resuming a live game safely (including engine and clock state)
-  is a meaningfully bigger feature than persisting settings.
+  live board.
 - **Keyboard input for making moves isn't implemented.** All non-board controls
-  (every button, slider, checkbox, and the FEN field) are fully keyboard
-  operable, but moving pieces on the board itself is drag/tap-based, as it is on
-  most chess sites.
+  are fully keyboard operable, but moving pieces on the board itself is
+  drag/tap-based, as on most chess sites.
 - Stockfish "resigning" isn't modeled — only the human player can resign.
 - A flagged clock always loses, even in the (rare) case the opponent has no
   possible way to checkmate — most casual chess clocks work this way too.
+- The piece **palette** swatches use plain text glyphs regardless of the chosen
+  piece set — only the board itself shows the Uzbek/classic artwork. The
+  palette's job is picking a piece type, not matching the board's theme.
 
 ## License
 
 This project's own code has no license header attached — add one if you plan to
 share it further. Its dependencies carry their own licenses: Stockfish and
 Chessground are GPL-3.0-or-later; chess.js is BSD-2-Clause. See
-`public/engine/README.md` for specifics on the bundled engine binary and piece
-artwork.
+`public/engine/README.md` for specifics on the bundled engine binary and the
+classic piece artwork's origin.

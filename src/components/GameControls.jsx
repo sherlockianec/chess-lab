@@ -19,14 +19,14 @@ export default function GameControls({
       <h2 className="panel-heading">Game</h2>
 
       <div className="button-row">
-        <button type="button" className="btn btn--ghost" onClick={onUndo} disabled={!canUndo}>
-          Undo
+        <button type="button" className="btn btn--ghost btn--icon btn--icon--undo" onClick={onUndo} disabled={!canUndo}>
+          <span className="btn-icon" aria-hidden="true">↶</span> Undo
         </button>
-        <button type="button" className="btn btn--ghost" onClick={onRedo} disabled={!canRedo}>
-          Redo
+        <button type="button" className="btn btn--ghost btn--icon btn--icon--redo" onClick={onRedo} disabled={!canRedo}>
+          <span className="btn-icon" aria-hidden="true">↷</span> Redo
         </button>
-        <button type="button" className="btn btn--ghost" onClick={onRestart}>
-          Restart
+        <button type="button" className="btn btn--ghost btn--icon btn--icon--restart" onClick={onRestart}>
+          <span className="btn-icon" aria-hidden="true">⟳</span> Restart
         </button>
       </div>
 

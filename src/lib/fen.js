@@ -60,3 +60,42 @@ export function withCastlingRight(castling, letter, enabled) {
 export function hasCastlingRight(castling, letter) {
   return castling !== '-' && castling.includes(letter)
 }
+
+/** Map a placement-only FEN field to { a1: 'K', e8: 'k', ... } (letter case = color). */
+function pieceMapFromPlacement(placement) {
+  const board = {}
+  const ranks = placement.split('/')
+  for (let r = 0; r < ranks.length && r < 8; r++) {
+    const rank = 8 - r
+    let file = 0
+    for (const ch of ranks[r]) {
+      if (/\d/.test(ch)) {
+        file += Number(ch)
+      } else {
+        const fileLetter = FILES[file]
+        if (fileLetter) board[`${fileLetter}${rank}`] = ch
+        file += 1
+      }
+    }
+  }
+  return board
+}
+
+/**
+ * Recompute which castling rights are actually possible from where the kings and
+ * rooks currently sit: a right requires its king AND its rook to both still be on
+ * their home squares. Used to keep the editor's castling checkboxes truthful as
+ * the position is edited, rather than leaving stale rights checked after a king
+ * or rook is moved or removed.
+ */
+export function deriveCastlingRights(placement) {
+  const board = pieceMapFromPlacement(placement)
+  const whiteKingHome = board.e1 === 'K'
+  const blackKingHome = board.e8 === 'k'
+  let rights = ''
+  if (whiteKingHome && board.h1 === 'R') rights += 'K'
+  if (whiteKingHome && board.a1 === 'R') rights += 'Q'
+  if (blackKingHome && board.h8 === 'r') rights += 'k'
+  if (blackKingHome && board.a8 === 'r') rights += 'q'
+  return rights || '-'
+}

@@ -89,6 +89,8 @@ export function useChessGame(initialFen) {
     turn: chess.turn(),
     status,
     history,
+    /** Full per-ply detail (fen/san/from/to), index 0 = starting position — used by game review/PGN export. */
+    moveRecords: past,
     lastMove: current.from && current.to ? { from: current.from, to: current.to } : null,
     canUndo: past.length > 1,
     canRedo: redoStack.length > 0,

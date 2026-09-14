@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45">
+  <g fill="#f2e8d5" stroke="#241c10" stroke-width="1" stroke-linejoin="round">
+    <style>.piece-band{fill:#b5883f;stroke:none}.piece-line{stroke:#241c10;stroke-width:1.1}.piece-eye{fill:#241c10;stroke:none}</style>
+    <path d="M 14.00 34 Q 14.00 26.30 18.30 20 L 26.70 20 Q 31.00 26.30 31.00 34 Z" />
+  <rect x="13.00" y="34" width="19.00" height="4" rx="1.6" /><rect x="11.50" y="38" width="22.00" height="2.6" rx="1.3" />
+  <circle cx="22.5" cy="16" r="6.2" />
+  <path d="M 16.90 18.5 C 14.50 19.5 14.50 22 16.70 22.6" fill="none" class="piece-line" stroke-linecap="round" />
+  <path d="M 28.10 18.5 C 30.50 19.5 30.50 22 28.30 22.6" fill="none" class="piece-line" stroke-linecap="round" />
+  <path d="M 22.50,5.30 L 22.99,6.51 L 24.20,7.00 L 22.99,7.49 L 22.50,8.70 L 22.01,7.49 L 20.80,7.00 L 22.01,6.51 Z" />
+  </g>
+</svg>

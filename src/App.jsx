@@ -1,23 +1,31 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Chess } from 'chess.js'
 import Board from './components/Board.jsx'
 import PromotionPicker from './components/PromotionPicker.jsx'
+import PiecePalette from './components/PiecePalette.jsx'
 import PositionEditor from './components/PositionEditor.jsx'
 import PlayerPanel from './components/PlayerPanel.jsx'
 import DifficultyPanel from './components/DifficultyPanel.jsx'
 import TimerPanel from './components/TimerPanel.jsx'
 import GameControls from './components/GameControls.jsx'
 import GameStatusBanner from './components/GameStatusBanner.jsx'
+import GameOverModal from './components/GameOverModal.jsx'
 import MoveHistory from './components/MoveHistory.jsx'
 import EvalBar from './components/EvalBar.jsx'
 import ClockDisplay from './components/ClockDisplay.jsx'
+import ReviewPanel from './components/ReviewPanel.jsx'
+import PgnImportPanel from './components/PgnImportPanel.jsx'
+import CopyButton from './components/CopyButton.jsx'
 import { useChessGame } from './hooks/useChessGame.js'
 import { useStockfish } from './hooks/useStockfish.js'
 import { useClock } from './hooks/useClock.js'
+import { useGameReview } from './hooks/useGameReview.js'
 import { useLocalStorage } from './hooks/useLocalStorage.js'
-import { START_FEN, buildFen, parseFen } from './lib/fen.js'
+import { START_FEN, buildFen, deriveCastlingRights, parseFen } from './lib/fen.js'
 import { validatePosition } from './lib/positionValidation.js'
 import { resolveTimeControl } from './lib/timeControl.js'
 import { getTier } from './lib/difficulty.js'
+import { buildPgn, parsePgn } from './lib/pgn.js'
 import { opponentOf, toFullColor } from './lib/color.js'
 import './App.css'
 
@@ -33,6 +41,8 @@ const DEFAULT_SETTINGS = {
   showDests: true,
   showEval: true,
   showHistory: true,
+  theme: 'dark', // 'dark' | 'light'
+  pieceSet: 'classic', // 'classic' | 'uzbek'
 }
 
 function describeResult(result) {
@@ -58,19 +68,28 @@ function describeResult(result) {
   }
 }
 
+function pgnResultTag(result) {
+  if (!result.over) return '*'
+  if (result.winner === 'w') return '1-0'
+  if (result.winner === 'b') return '0-1'
+  return '1/2-1/2'
+}
+
 export default function App() {
   const [settings, setSettings] = useLocalStorage('chess-lab:settings:v1', DEFAULT_SETTINGS)
-  const [phase, setPhase] = useState('setup') // 'setup' | 'playing'
+  const [phase, setPhase] = useState('setup') // 'setup' | 'playing' | 'review'
   const [initialEditorFen, setInitialEditorFen] = useState(settings.editorFen)
   const [validationError, setValidationError] = useState(null)
-  const [eraserActive, setEraserActive] = useState(false)
+  const [activeTool, setActiveTool] = useState(null) // null | 'eraser' | { role, color }
   const [pendingPromotion, setPendingPromotion] = useState(null) // { from, to, color }
   const [resignedBy, setResignedBy] = useState(null) // 'w' | 'b' | null
   const [gameSessionId, setGameSessionId] = useState(0)
+  const [modalDismissed, setModalDismissed] = useState(false)
 
   const boardRef = useRef(null)
   const engine = useStockfish()
   const game = useChessGame(settings.editorFen)
+  const review = useGameReview()
 
   const humanColorLetter = settings.playerColor === 'white' ? 'w' : settings.playerColor === 'black' ? 'b' : null
 
@@ -87,6 +106,12 @@ export default function App() {
     return game.status
   }, [resignedBy, clock.flagged, game.status])
 
+  // Match the document's native form-control rendering (scrollbars, checkboxes,
+  // ...) to whichever theme is active.
+  useEffect(() => {
+    document.documentElement.style.colorScheme = settings.theme
+  }, [settings.theme])
+
   // Start the clock for whoever is to move exactly once per new game. gameSessionId
   // (bumped by Start/Restart) is the real trigger; game.turn is read fresh here
   // rather than listed as a dependency, since we only ever want this on session change.
@@ -94,6 +119,10 @@ export default function App() {
     if (phase === 'playing' && resolvedTimeControl) clock.startTurn(game.turn)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameSessionId, phase])
+
+  useEffect(() => {
+    setModalDismissed(false)
+  }, [gameSessionId])
 
   // The moment the game ends (checkmate, draw, resignation, or flag), stop the
   // clock and cancel any engine search still running.
@@ -161,6 +190,31 @@ export default function App() {
     settings.showEval,
   ])
 
+  // Game review: walk every position in the loaded game once, sequentially, and
+  // record each one's evaluation as it comes back. Re-running this effect is
+  // gated on the *array itself* changing (only true when review.load() is
+  // called), so it runs exactly once per loaded game, not once per navigation.
+  useEffect(() => {
+    if (phase !== 'review' || !review.active || engine.status !== 'ready') return undefined
+    let cancelled = false
+    ;(async () => {
+      for (let i = 0; i < review.positions.length; i++) {
+        if (cancelled) return
+        const posFen = review.positions[i].fen
+        const turn = posFen.split(' ')[1] === 'b' ? 'b' : 'w'
+        const ev = await engine.evaluatePosition(posFen, turn, 400)
+        if (cancelled) return
+        review.recordEval(i, ev)
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase, review.active, review.positions, engine.status])
+
+  const reviewAnalyzing = review.active && Object.keys(review.evals).length < (review.positions?.length ?? 0)
+
   // --- Position editor handlers ---------------------------------------------
 
   const handleEditorFenChange = (fen) => {
@@ -170,14 +224,18 @@ export default function App() {
 
   const handleEditorBoardChange = (placement) => {
     const parsed = parseFen(settings.editorFen)
-    handleEditorFenChange(buildFen({ ...parsed, placement }))
+    handleEditorFenChange(buildFen({ ...parsed, placement, castling: deriveCastlingRights(placement) }))
   }
 
-  const handleEraserToggle = () => setEraserActive((v) => !v)
+  const handleEraserToggle = () => setActiveTool((t) => (t === 'eraser' ? null : 'eraser'))
 
   const handleEditorSquareSelect = (key) => {
-    if (!eraserActive || !boardRef.current) return
-    boardRef.current.setPieces(new Map([[key, undefined]]))
+    if (!boardRef.current || !activeTool) return
+    if (activeTool === 'eraser') {
+      boardRef.current.setPieces(new Map([[key, undefined]]))
+    } else {
+      boardRef.current.setPieces(new Map([[key, { role: activeTool.role, color: activeTool.color }]]))
+    }
     const placement = boardRef.current.getFen()
     if (placement) handleEditorBoardChange(placement)
   }
@@ -187,6 +245,15 @@ export default function App() {
   const handleResetEditor = () => handleEditorFenChange(initialEditorFen)
 
   const handleFlipBoard = () => setSettings((s) => ({ ...s, orientation: s.orientation === 'white' ? 'black' : 'white' }))
+
+  const handleImportPgn = (text) => {
+    const parsed = parsePgn(text)
+    if (parsed.ok) {
+      review.load(parsed.positions, parsed.headers)
+      setPhase('review')
+    }
+    return parsed
+  }
 
   // --- Play handlers ----------------------------------------------------------
 
@@ -219,7 +286,7 @@ export default function App() {
       return
     }
     setValidationError(null)
-    setEraserActive(false)
+    setActiveTool(null)
     setPendingPromotion(null)
     setResignedBy(null)
 
@@ -239,7 +306,7 @@ export default function App() {
   const handleRedo = () => game.redo()
 
   const handleRestart = () => {
-    setEraserActive(false)
+    setActiveTool(null)
     setPendingPromotion(null)
     setResignedBy(null)
     game.resetTo(game.startFen)
@@ -254,12 +321,34 @@ export default function App() {
 
   const handleReturnToEditor = () => {
     engine.stop()
+    review.clear()
     setPendingPromotion(null)
-    setEraserActive(false)
+    setActiveTool(null)
     setResignedBy(null)
     setInitialEditorFen(game.fen)
     setSettings((s) => ({ ...s, editorFen: game.fen }))
     setPhase('setup')
+  }
+
+  const handleAnalyzeCurrentGame = () => {
+    review.load(game.moveRecords, null)
+    setPhase('review')
+  }
+
+  const handleExitReview = () => {
+    review.clear()
+    setPhase('setup')
+  }
+
+  const pgnHeadersForCurrentGame = () => {
+    const humanLabel = 'Human'
+    const engineLabel = 'Stockfish'
+    return {
+      Event: 'Chess Lab game',
+      White: settings.playerColor === 'black' ? engineLabel : settings.playerColor === 'watch' ? engineLabel : humanLabel,
+      Black: settings.playerColor === 'white' ? engineLabel : settings.playerColor === 'watch' ? engineLabel : humanLabel,
+      Result: pgnResultTag(result),
+    }
   }
 
   // --- Board props --------------------------------------------------------
@@ -286,9 +375,25 @@ export default function App() {
   const movableColor =
     phase === 'setup' ? 'both' : settings.playerColor === 'watch' ? undefined : toFullColor(humanColorLetter)
 
-  const boardFen = phase === 'setup' ? settings.editorFen : game.fen
-  const boardTurnLetter = phase === 'setup' ? parseFen(settings.editorFen).turn : game.turn
-  const inCheck = phase === 'playing' && !result.over && game.chess.isCheck()
+  const reviewPosition = phase === 'review' && review.active ? review.positions[review.index] : null
+  const reviewChess = useMemo(() => (reviewPosition ? new Chess(reviewPosition.fen) : null), [reviewPosition])
+
+  const boardFen = phase === 'setup' ? settings.editorFen : phase === 'review' ? reviewPosition?.fen ?? START_FEN : game.fen
+  const boardTurnLetter =
+    phase === 'setup' ? parseFen(settings.editorFen).turn : phase === 'review' ? reviewChess?.turn() ?? 'w' : game.turn
+  const inCheck =
+    phase === 'playing' ? !result.over && game.chess.isCheck() : phase === 'review' ? !!reviewChess?.isCheck() : false
+
+  const boardLastMove =
+    phase === 'playing'
+      ? game.lastMove
+        ? [game.lastMove.from, game.lastMove.to]
+        : undefined
+      : phase === 'review' && reviewPosition?.from
+        ? [reviewPosition.from, reviewPosition.to]
+        : undefined
+
+  const evalBarValue = phase === 'review' ? review.evals[review.index] : engine.evaluation
 
   const bannerInfo = result.over
     ? { message: describeResult(result), tone: 'result' }
@@ -299,9 +404,19 @@ export default function App() {
         : { message: null, tone: 'info' }
 
   return (
-    <div className="app-shell">
+    <div className={`app-shell piece-set-${settings.pieceSet}`} data-theme={settings.theme}>
       <header className="app-header">
+        <div className="app-header__spacer" aria-hidden="true" />
         <h1 className="wordmark">Chess Lab</h1>
+        <button
+          type="button"
+          className="theme-toggle"
+          onClick={() => setSettings((s) => ({ ...s, theme: s.theme === 'dark' ? 'light' : 'dark' }))}
+          aria-label={`Switch to ${settings.theme === 'dark' ? 'light' : 'dark'} theme`}
+          title={`Switch to ${settings.theme === 'dark' ? 'light' : 'dark'} theme`}
+        >
+          {settings.theme === 'dark' ? '☀' : '🌙'}
+        </button>
       </header>
 
       <main className="app-main">
@@ -315,19 +430,19 @@ export default function App() {
           />
 
           <div className="board-area">
-            <EvalBar evaluation={engine.evaluation} visible={phase === 'playing' && settings.showEval} />
+            <EvalBar evaluation={evalBarValue} visible={(phase === 'playing' && settings.showEval) || phase === 'review'} />
             <div className="board-frame">
               <Board
                 ref={boardRef}
                 fen={boardFen}
                 orientation={settings.orientation}
                 turnColor={toFullColor(boardTurnLetter)}
-                check={inCheck ? toFullColor(game.turn) : false}
-                lastMove={phase === 'playing' && game.lastMove ? [game.lastMove.from, game.lastMove.to] : undefined}
+                check={inCheck ? toFullColor(phase === 'review' ? reviewChess.turn() : game.turn) : false}
+                lastMove={boardLastMove}
                 free={phase === 'setup'}
                 movableColor={movableColor}
                 dests={phase === 'playing' ? dests : undefined}
-                viewOnly={phase === 'playing' && (settings.playerColor === 'watch' || result.over)}
+                viewOnly={phase === 'review' || (phase === 'playing' && (settings.playerColor === 'watch' || result.over))}
                 showDests={settings.showDests}
                 deleteOnDropOff={phase === 'setup'}
                 onMove={phase === 'playing' ? handleBoardMove : undefined}
@@ -340,13 +455,25 @@ export default function App() {
             </div>
           </div>
 
+          {phase === 'setup' && (
+            <>
+              <PiecePalette
+                activeTool={activeTool}
+                onSelectTool={setActiveTool}
+                onEraserToggle={handleEraserToggle}
+                onDragStart={handlePaletteDragStart}
+              />
+              <p className="hint-text">Drag a piece onto the board, or tap a piece then tap a square to place it.</p>
+            </>
+          )}
+
           <div className="button-row board-actions">
             <button type="button" className="btn btn--ghost" onClick={handleFlipBoard}>
               Flip board
             </button>
           </div>
 
-          <GameStatusBanner message={bannerInfo.message} tone={bannerInfo.tone} thinking={engine.thinking} />
+          {phase !== 'review' && <GameStatusBanner message={bannerInfo.message} tone={bannerInfo.tone} thinking={engine.thinking} />}
 
           {engine.status === 'error' && (
             <p className="engine-error" role="alert">
@@ -357,23 +484,26 @@ export default function App() {
         </div>
 
         <aside className="side-panel">
-          {phase === 'setup' ? (
+          {phase === 'setup' && (
             <>
               <PositionEditor
                 fen={settings.editorFen}
                 onChange={handleEditorFenChange}
                 onResetToInitial={handleResetEditor}
                 validationError={validationError}
-                eraserActive={eraserActive}
-                onEraserToggle={handleEraserToggle}
-                onPaletteDragStart={handlePaletteDragStart}
               />
-              <PlayerPanel
-                playerColor={settings.playerColor}
-                onChange={(playerColor) => setSettings((s) => ({ ...s, playerColor }))}
-                engineMovesFirst={settings.engineMovesFirst}
-                onEngineMovesFirstChange={(v) => setSettings((s) => ({ ...s, engineMovesFirst: v }))}
-              />
+              <div className="panel-columns">
+                <PlayerPanel
+                  playerColor={settings.playerColor}
+                  onChange={(playerColor) => setSettings((s) => ({ ...s, playerColor }))}
+                  engineMovesFirst={settings.engineMovesFirst}
+                  onEngineMovesFirstChange={(v) => setSettings((s) => ({ ...s, engineMovesFirst: v }))}
+                />
+                <TimerPanel
+                  timeControl={settings.timeControl}
+                  onChange={(timeControl) => setSettings((s) => ({ ...s, timeControl }))}
+                />
+              </div>
               <DifficultyPanel
                 tierId={settings.difficultyTierId}
                 onTierChange={(id) =>
@@ -388,15 +518,41 @@ export default function App() {
                 custom={settings.customDifficulty}
                 onCustomChange={(custom) => setSettings((s) => ({ ...s, customDifficulty: custom }))}
               />
-              <TimerPanel
-                timeControl={settings.timeControl}
-                onChange={(timeControl) => setSettings((s) => ({ ...s, timeControl }))}
-              />
+              <PgnImportPanel onImport={handleImportPgn} />
+              <section className="panel-section" aria-label="Appearance">
+                <h2 className="panel-heading">Appearance</h2>
+                <fieldset className="field-group">
+                  <legend>Piece set</legend>
+                  <div className="segmented" role="radiogroup" aria-label="Piece set">
+                    <button
+                      type="button"
+                      role="radio"
+                      aria-checked={settings.pieceSet === 'classic'}
+                      className={`segmented__option${settings.pieceSet === 'classic' ? ' is-selected' : ''}`}
+                      onClick={() => setSettings((s) => ({ ...s, pieceSet: 'classic' }))}
+                    >
+                      Classic
+                    </button>
+                    <button
+                      type="button"
+                      role="radio"
+                      aria-checked={settings.pieceSet === 'uzbek'}
+                      className={`segmented__option${settings.pieceSet === 'uzbek' ? ' is-selected' : ''}`}
+                      onClick={() => setSettings((s) => ({ ...s, pieceSet: 'uzbek' }))}
+                    >
+                      Uzbek Lab
+                    </button>
+                  </div>
+                  <p className="hint-text hint-text--muted">Central Asian-inspired minimalist set — domed king, star finials, a fortress-tower rook.</p>
+                </fieldset>
+              </section>
               <button type="button" className="btn btn--primary btn--large" onClick={handleStartGame}>
                 Start game
               </button>
             </>
-          ) : (
+          )}
+
+          {phase === 'playing' && (
             <>
               <GameControls
                 canUndo={game.canUndo}
@@ -425,11 +581,52 @@ export default function App() {
                   onFocus={(e) => e.target.select()}
                   aria-label="Current position FEN"
                 />
+                <div className="button-row" style={{ marginTop: 8 }}>
+                  <CopyButton
+                    label="Copy PGN"
+                    getText={() => buildPgn(game.startFen, game.history, pgnHeadersForCurrentGame())}
+                  />
+                  {result.over && (
+                    <button type="button" className="btn btn--ghost" onClick={handleAnalyzeCurrentGame}>
+                      Analyze game
+                    </button>
+                  )}
+                </div>
               </section>
             </>
           )}
+
+          {phase === 'review' && review.active && (
+            <ReviewPanel
+              positions={review.positions}
+              index={review.index}
+              evals={review.evals}
+              headers={review.headers}
+              analyzing={reviewAnalyzing}
+              onGoTo={review.goTo}
+              onPrev={review.prev}
+              onNext={review.next}
+              onExit={handleExitReview}
+              onExportPgn={() =>
+                buildPgn(
+                  review.positions[0].fen,
+                  review.positions.slice(1).map((p) => p.san),
+                  review.headers || {},
+                )
+              }
+            />
+          )}
         </aside>
       </main>
+
+      <GameOverModal
+        open={phase === 'playing' && result.over && !modalDismissed}
+        result={result}
+        onClose={() => setModalDismissed(true)}
+        onNewGame={handleRestart}
+        onAnalyze={handleAnalyzeCurrentGame}
+        onMainMenu={handleReturnToEditor}
+      />
     </div>
   )
 }

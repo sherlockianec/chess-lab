@@ -9,17 +9,8 @@ import {
   possibleEpSquares,
   withCastlingRight,
 } from '../lib/fen.js'
-import PiecePalette from './PiecePalette.jsx'
 
-export default function PositionEditor({
-  fen,
-  onChange,
-  onResetToInitial,
-  validationError,
-  eraserActive,
-  onEraserToggle,
-  onPaletteDragStart,
-}) {
+export default function PositionEditor({ fen, onChange, onResetToInitial, validationError }) {
   const parsed = parseFen(fen)
   const [fenDraft, setFenDraft] = useState(fen)
   const [copyLabel, setCopyLabel] = useState('Copy FEN')
@@ -52,34 +43,43 @@ export default function PositionEditor({
     <section className="panel-section" aria-label="Position editor">
       <h2 className="panel-heading">Position</h2>
 
-      <PiecePalette eraserActive={eraserActive} onEraserToggle={onEraserToggle} onDragStart={onPaletteDragStart} />
-      <p className="hint-text">Drag a piece onto the board to place it, or drag a board piece off it to remove it.</p>
-
       <div className="button-row">
-        <button type="button" className="btn btn--ghost" onClick={() => onChange(START_FEN)}>
-          Standard position
+        <button type="button" className="btn btn--preset btn--preset--standard" onClick={() => onChange(START_FEN)}>
+          <span className="btn-icon" aria-hidden="true">♜</span> Standard position
         </button>
-        <button type="button" className="btn btn--ghost" onClick={() => onChange(EMPTY_FEN)}>
-          Empty board
+        <button type="button" className="btn btn--preset btn--preset--empty" onClick={() => onChange(EMPTY_FEN)}>
+          <span className="btn-icon" aria-hidden="true">▢</span> Empty board
         </button>
-        <button type="button" className="btn btn--ghost" onClick={() => setField({ placement: EMPTY_PLACEMENT })}>
-          Clear pieces
+        <button type="button" className="btn btn--preset btn--preset--clear" onClick={() => setField({ placement: EMPTY_PLACEMENT })}>
+          <span className="btn-icon" aria-hidden="true">✕</span> Clear pieces
         </button>
-        <button type="button" className="btn btn--ghost" onClick={onResetToInitial}>
-          Reset
+        <button type="button" className="btn btn--preset btn--preset--reset" onClick={onResetToInitial}>
+          <span className="btn-icon" aria-hidden="true">↺</span> Reset
         </button>
       </div>
 
       <fieldset className="field-group">
         <legend>Side to move</legend>
-        <label className="radio-label">
-          <input type="radio" name="turn" checked={parsed.turn === 'w'} onChange={() => handleTurnChange('w')} />
-          White to move
-        </label>
-        <label className="radio-label">
-          <input type="radio" name="turn" checked={parsed.turn === 'b'} onChange={() => handleTurnChange('b')} />
-          Black to move
-        </label>
+        <div className="segmented" role="radiogroup" aria-label="Side to move">
+          <button
+            type="button"
+            role="radio"
+            aria-checked={parsed.turn === 'w'}
+            className={`segmented__option${parsed.turn === 'w' ? ' is-selected' : ''}`}
+            onClick={() => handleTurnChange('w')}
+          >
+            White to move
+          </button>
+          <button
+            type="button"
+            role="radio"
+            aria-checked={parsed.turn === 'b'}
+            className={`segmented__option${parsed.turn === 'b' ? ' is-selected' : ''}`}
+            onClick={() => handleTurnChange('b')}
+          >
+            Black to move
+          </button>
+        </div>
       </fieldset>
 
       <fieldset className="field-group">
