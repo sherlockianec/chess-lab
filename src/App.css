@@ -276,7 +276,7 @@
 .promotion-choice {
   width: 56px;
   height: 56px;
-  font-size: 34px;
+  padding: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -285,13 +285,11 @@
   border-radius: var(--radius-sm);
   cursor: pointer;
 }
-.promotion-choice.is-white {
-  color: #f2e8d5;
-  -webkit-text-stroke: 1px #241c10;
-}
-.promotion-choice.is-black {
-  color: #1c150c;
-  -webkit-text-stroke: 1px #f2e8d5;
+.promotion-choice img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
 }
 .promotion-choice:hover {
   border-color: var(--gold);
@@ -627,22 +625,19 @@ input[type='range'] {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 22px;
-  line-height: 1;
   background: var(--bg-panel-raised);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
   cursor: grab;
   user-select: none;
   touch-action: none;
+  padding: 4px;
 }
-.piece-swatch--white {
-  color: #f2e8d5;
-  -webkit-text-stroke: 1px #241c10;
-}
-.piece-swatch--black {
-  color: #1c150c;
-  -webkit-text-stroke: 1px #f2e8d5;
+.piece-swatch img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
 }
 .piece-swatch:hover {
   border-color: var(--gold);
@@ -774,29 +769,41 @@ input[type='range'] {
   width: 100%;
   height: 90px;
   display: block;
-  background: var(--bg-panel-raised);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
   cursor: pointer;
+  overflow: hidden;
+}
+.eval-graph__bg-black {
+  fill: #17110a;
+}
+.eval-graph__area-white {
+  fill: #ece3d2;
 }
 .eval-graph__zero {
-  stroke: var(--border-strong);
-  stroke-width: 0.4;
+  stroke: rgba(120, 120, 120, 0.6);
+  stroke-width: 0.3;
+  stroke-dasharray: 1.5 1.2;
+  vector-effect: non-scaling-stroke;
 }
-.eval-graph__area-top {
+.eval-graph__line {
   stroke: var(--gold-bright);
-  stroke-width: 1;
+  stroke-width: 0.9;
+  stroke-linejoin: round;
+  stroke-linecap: round;
   vector-effect: non-scaling-stroke;
 }
 .eval-graph__cursor {
-  stroke: var(--text-muted);
-  stroke-width: 0.4;
-  stroke-dasharray: 2 1;
+  stroke: var(--gold);
+  stroke-width: 0.5;
+  stroke-dasharray: 1.5 1;
+  vector-effect: non-scaling-stroke;
 }
 .eval-graph__dot {
   fill: var(--gold-bright);
-  stroke: var(--bg-panel);
-  stroke-width: 0.6;
+  stroke: #17110a;
+  stroke-width: 0.5;
+  vector-effect: non-scaling-stroke;
 }
 .eval-graph__footer {
   display: flex;
@@ -825,4 +832,96 @@ input[type='range'] {
   background: var(--gold);
   color: #211705;
   font-weight: 700;
+}
+
+/* Move quality badges ---------------------------------------------------- */
+
+.quality-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  line-height: 1.6;
+}
+.quality-badge--sm {
+  font-size: 10px;
+  padding: 0 5px;
+}
+.quality-badge--brilliant {
+  background: rgba(38, 198, 190, 0.18);
+  color: #3fd6c9;
+}
+.quality-badge--great {
+  background: rgba(56, 168, 157, 0.18);
+  color: #4bb3a4;
+}
+.quality-badge--best {
+  background: rgba(92, 184, 92, 0.18);
+  color: #6dc06d;
+}
+.quality-badge--excellent {
+  background: rgba(139, 195, 74, 0.18);
+  color: #9ccb5c;
+}
+.quality-badge--good {
+  background: rgba(108, 147, 199, 0.18);
+  color: #85a9d6;
+}
+.quality-badge--book {
+  background: rgba(169, 130, 90, 0.22);
+  color: #c19a6f;
+}
+.quality-badge--inaccuracy {
+  background: rgba(224, 178, 79, 0.2);
+  color: #e0b24f;
+}
+.quality-badge--mistake {
+  background: rgba(224, 128, 48, 0.2);
+  color: #e0913c;
+}
+.quality-badge--miss {
+  background: rgba(224, 96, 48, 0.22);
+  color: #e07d51;
+}
+.quality-badge--blunder {
+  background: rgba(193, 84, 63, 0.22);
+  color: var(--danger-bright);
+}
+
+.current-move-quality {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  min-height: 20px;
+}
+
+.quality-summary {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+.quality-summary th,
+.quality-summary td {
+  padding: 3px 4px;
+  text-align: center;
+}
+.quality-summary thead th {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.quality-summary tbody th {
+  text-align: left;
+}
+.quality-summary tbody td {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+.move-history__list li {
+  flex-wrap: wrap;
+  row-gap: 2px;
 }

@@ -1,20 +1,12 @@
 import { useRef } from 'react'
+import { getPieceIconUrl } from '../lib/pieceIcons.js'
 
 const PALETTE = [
-  { role: 'k', color: 'w' }, { role: 'q', color: 'w' }, { role: 'r', color: 'w' },
-  { role: 'b', color: 'w' }, { role: 'n', color: 'w' }, { role: 'p', color: 'w' },
-  { role: 'k', color: 'b' }, { role: 'q', color: 'b' }, { role: 'r', color: 'b' },
-  { role: 'b', color: 'b' }, { role: 'n', color: 'b' }, { role: 'p', color: 'b' },
+  { role: 'king', color: 'white' }, { role: 'queen', color: 'white' }, { role: 'rook', color: 'white' },
+  { role: 'bishop', color: 'white' }, { role: 'knight', color: 'white' }, { role: 'pawn', color: 'white' },
+  { role: 'king', color: 'black' }, { role: 'queen', color: 'black' }, { role: 'rook', color: 'black' },
+  { role: 'bishop', color: 'black' }, { role: 'knight', color: 'black' }, { role: 'pawn', color: 'black' },
 ]
-
-// Deliberately the SOLID glyph shapes for both colors (never the hollow "white"
-// code points). Hollow chess glyphs render wildly inconsistently across fonts —
-// on some systems the hollow interior fills in with `color` anyway, making the
-// white and black swatches nearly indistinguishable or even swapped-looking.
-// Solid shapes plus our own fill color behave predictably everywhere.
-const GLYPHS = { k: '♚', q: '♛', r: '♜', b: '♝', n: '♞', p: '♟' }
-const ROLE_NAMES = { k: 'king', q: 'queen', r: 'rook', b: 'bishop', n: 'knight', p: 'pawn' }
-const COLOR_NAMES = { w: 'white', b: 'black' }
 
 const toolKey = (tool) => (tool && tool !== 'eraser' ? `${tool.color}-${tool.role}` : null)
 const DRAG_THRESHOLD_PX = 6
@@ -25,15 +17,15 @@ const DRAG_THRESHOLD_PX = 6
  * mousemove/touchmove event that first crosses the drag threshold), or tap it
  * once to "arm" it, then tap a board square to drop it there without dragging.
  *
- * activeTool is one of: null, 'eraser', or a piece object { role: 'king', color:
- * 'white' }, owned by the parent so the board's square-tap handler can react to
- * it the same way regardless of how it got armed.
+ * Swatches show the same artwork as the active piece set (see lib/pieceIcons.js)
+ * rather than Unicode glyphs, so color is never ambiguous and the palette always
+ * matches whichever theme is selected.
  *
  * Each press starts its own short-lived gesture with its own move/up handlers
  * (rather than shared component-level callbacks), so there's no risk of a stale
  * closure from a previous render mismatching the listener that gets removed.
  */
-export default function PiecePalette({ activeTool, onSelectTool, onEraserToggle, onDragStart }) {
+export default function PiecePalette({ pieceSet, activeTool, onSelectTool, onEraserToggle, onDragStart }) {
   const activeToolRef = useRef(activeTool)
   activeToolRef.current = activeTool
 
@@ -59,15 +51,14 @@ export default function PiecePalette({ activeTool, onSelectTool, onEraserToggle,
       if (Math.hypot(p.clientX - startX, p.clientY - startY) > DRAG_THRESHOLD_PX) {
         dragging = true
         cleanup()
-        onDragStart({ role: ROLE_NAMES[piece.role], color: COLOR_NAMES[piece.color] }, e)
+        onDragStart(piece, e)
       }
     }
 
     function onUp() {
       cleanup()
       if (!dragging) {
-        const armed = { role: ROLE_NAMES[piece.role], color: COLOR_NAMES[piece.color] }
-        onSelectTool(toolKey(activeToolRef.current) === toolKey(armed) ? null : armed)
+        onSelectTool(toolKey(activeToolRef.current) === toolKey(piece) ? null : piece)
       }
     }
 
@@ -82,20 +73,20 @@ export default function PiecePalette({ activeTool, onSelectTool, onEraserToggle,
   return (
     <div className="piece-palette">
       <div className="piece-palette__grid">
-        {PALETTE.map(({ role, color }) => {
-          const thisKey = `${COLOR_NAMES[color]}-${ROLE_NAMES[role]}`
+        {PALETTE.map((piece) => {
+          const thisKey = `${piece.color}-${piece.role}`
           return (
             <button
               key={thisKey}
               type="button"
-              className={`piece-swatch piece-swatch--${color === 'w' ? 'white' : 'black'}${activeKey === thisKey ? ' is-active' : ''}`}
-              onMouseDown={startGesture({ role, color })}
-              onTouchStart={startGesture({ role, color })}
+              className={`piece-swatch${activeKey === thisKey ? ' is-active' : ''}`}
+              onMouseDown={startGesture(piece)}
+              onTouchStart={startGesture(piece)}
               aria-pressed={activeKey === thisKey}
-              aria-label={`${COLOR_NAMES[color]} ${ROLE_NAMES[role]}: drag onto the board, or tap then tap a square`}
-              title={`${COLOR_NAMES[color]} ${ROLE_NAMES[role]} — drag, or tap then tap a square`}
+              aria-label={`${piece.color} ${piece.role}: drag onto the board, or tap then tap a square`}
+              title={`${piece.color} ${piece.role} — drag, or tap then tap a square`}
             >
-              <span aria-hidden="true">{GLYPHS[role]}</span>
+              <img src={getPieceIconUrl(pieceSet, piece.color, piece.role)} alt="" draggable={false} />
             </button>
           )
         })}

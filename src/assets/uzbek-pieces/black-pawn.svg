@@ -1,8 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45">
   <g fill="#1c150c" stroke="#f2e8d5" stroke-width="1" stroke-linejoin="round">
     <style>.piece-band{fill:#c9a668;stroke:none}.piece-line{stroke:#f2e8d5;stroke-width:1.1}.piece-eye{fill:#f2e8d5;stroke:none}</style>
-    M 17.10 18.00 C 17.10 11.79 19.53 12.60 22.5 12.60 C 25.47 12.60 27.90 11.79 27.90 18.00 Z
-  <path d="M 14.00 33 Q 14.00 26.40 18.90 21 L 26.10 21 Q 31.00 26.40 31.00 33 Z" />
+    <circle cx="22.5" cy="16.5" r="5.6" />
+  <path d="M 14.00 33
+    Q 14.00 25.17 18.90 19.5
+    L 26.10 19.5
+    Q 31.00 25.17 31.00 33 Z" />
   <rect x="13.00" y="33" width="19.00" height="4" rx="1.6" /><rect x="11.50" y="37" width="22.00" height="2.6" rx="1.3" />
   </g>
 </svg>

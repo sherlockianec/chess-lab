@@ -1,27 +1,28 @@
-// Solid glyph shapes only (see PiecePalette.jsx for why) — color is applied via
-// CSS classes (.is-white / .is-black) rather than switching Unicode code points.
+import { getPieceIconUrl } from '../lib/pieceIcons.js'
+
 const CHOICES = [
-  { role: 'q', label: 'Queen', glyph: '♛' },
-  { role: 'r', label: 'Rook', glyph: '♜' },
-  { role: 'b', label: 'Bishop', glyph: '♝' },
-  { role: 'n', label: 'Knight', glyph: '♞' },
+  { role: 'queen', label: 'Queen' },
+  { role: 'rook', label: 'Rook' },
+  { role: 'bishop', label: 'Bishop' },
+  { role: 'knight', label: 'Knight' },
 ]
 
 /** Small modal asking which piece a pawn should promote to. `color` is 'w' | 'b'. */
-export default function PromotionPicker({ color, onPick, onCancel }) {
+export default function PromotionPicker({ color, pieceSet, onPick, onCancel }) {
+  const fullColor = color === 'w' ? 'white' : 'black'
   return (
     <div className="promotion-overlay" role="dialog" aria-modal="true" aria-label="Choose promotion piece" onClick={onCancel}>
       <div className="promotion-panel" onClick={(event) => event.stopPropagation()}>
-        {CHOICES.map(({ role, label, glyph }) => (
+        {CHOICES.map(({ role, label }) => (
           <button
             key={role}
             type="button"
-            className={`promotion-choice ${color === 'w' ? 'is-white' : 'is-black'}`}
-            onClick={() => onPick(role)}
+            className="promotion-choice"
+            onClick={() => onPick(role[0])}
             aria-label={`Promote to ${label}`}
-            autoFocus={role === 'q'}
+            autoFocus={role === 'queen'}
           >
-            <span aria-hidden="true">{glyph}</span>
+            <img src={getPieceIconUrl(pieceSet, fullColor, role)} alt="" draggable={false} />
           </button>
         ))}
       </div>

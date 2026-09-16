@@ -56,7 +56,15 @@ export function uciMoveToObject(uciMove) {
 export function scoreToWhitePerspective(info, turn) {
   if (!info) return null
   const sign = turn === 'b' ? -1 : 1
-  if (typeof info.mate === 'number') return { mate: info.mate * sign }
+  if (typeof info.mate === 'number') {
+    // UCI reports "mate 0" when the side to move has already been checkmated --
+    // the worst possible outcome for that side. Naively multiplying by `sign`
+    // turns 0 into -0, which then fails a plain "> 0" direction check and reads
+    // as "the other side is favored" regardless of who actually won. Handle it
+    // as an explicit decisive result instead of letting that fall through.
+    if (info.mate === 0) return { mate: turn === 'w' ? -1 : 1 }
+    return { mate: info.mate * sign }
+  }
   if (typeof info.cp === 'number') return { cp: info.cp * sign }
   return null
 }

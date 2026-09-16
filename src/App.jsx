@@ -450,7 +450,12 @@ export default function App() {
                 onChange={phase === 'setup' ? handleEditorBoardChange : undefined}
               />
               {pendingPromotion && (
-                <PromotionPicker color={pendingPromotion.color} onPick={handlePromotionPick} onCancel={handlePromotionCancel} />
+                <PromotionPicker
+                  color={pendingPromotion.color}
+                  pieceSet={settings.pieceSet}
+                  onPick={handlePromotionPick}
+                  onCancel={handlePromotionCancel}
+                />
               )}
             </div>
           </div>
@@ -458,6 +463,7 @@ export default function App() {
           {phase === 'setup' && (
             <>
               <PiecePalette
+                pieceSet={settings.pieceSet}
                 activeTool={activeTool}
                 onSelectTool={setActiveTool}
                 onEraserToggle={handleEraserToggle}

@@ -1,9 +1,15 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import EvalGraph from './EvalGraph.jsx'
+import MoveQualityBadge from './MoveQualityBadge.jsx'
+import { MOVE_QUALITY_ORDER, classifyMoves, summarizeByColor } from '../lib/moveClassification.js'
 
 export default function ReviewPanel({ positions, index, evals, headers, analyzing, onGoTo, onPrev, onNext, onExit, onExportPgn }) {
   const [copyLabel, setCopyLabel] = useState('Copy PGN')
   const sanList = positions.slice(1).map((p) => p.san)
+
+  const classifications = useMemo(() => classifyMoves(positions, evals), [positions, evals])
+  const summary = useMemo(() => summarizeByColor(positions, classifications), [positions, classifications])
+  const currentMoveQuality = classifications[index] // the move that LED to the position being viewed
 
   const pairs = []
   for (let i = 0; i < sanList.length; i += 2) {
@@ -24,6 +30,8 @@ export default function ReviewPanel({ positions, index, evals, headers, analyzin
     setTimeout(() => setCopyLabel('Copy PGN'), 1500)
   }
 
+  const summaryRows = MOVE_QUALITY_ORDER.filter((key) => summary.w[key] || summary.b[key])
+
   return (
     <>
       <section className="panel-section">
@@ -41,6 +49,20 @@ export default function ReviewPanel({ positions, index, evals, headers, analyzin
           onSelect={onGoTo}
           analyzing={analyzing}
         />
+        <div className="current-move-quality">
+          {index === 0 ? (
+            <span className="hint-text hint-text--muted">Starting position</span>
+          ) : currentMoveQuality ? (
+            <>
+              <MoveQualityBadge classification={currentMoveQuality} />
+              <span className="hint-text hint-text--muted">
+                {positions[index].san} · {currentMoveQuality.lossCp === 0 ? 'no loss' : `${(currentMoveQuality.lossCp / 100).toFixed(2)} lost`}
+              </span>
+            </>
+          ) : (
+            <span className="hint-text hint-text--muted">Analyzing this move…</span>
+          )}
+        </div>
         <div className="button-row" style={{ marginTop: 10 }}>
           <button type="button" className="btn btn--ghost" onClick={onPrev} disabled={index === 0}>
             ◂ Prev
@@ -50,6 +72,32 @@ export default function ReviewPanel({ positions, index, evals, headers, analyzin
           </button>
         </div>
       </section>
+
+      {summaryRows.length > 0 && (
+        <section className="panel-section">
+          <h2 className="panel-heading">Move quality</h2>
+          <table className="quality-summary">
+            <thead>
+              <tr>
+                <th scope="col"></th>
+                <th scope="col">White</th>
+                <th scope="col">Black</th>
+              </tr>
+            </thead>
+            <tbody>
+              {summaryRows.map((key) => (
+                <tr key={key}>
+                  <th scope="row">
+                    <MoveQualityBadge classification={{ key, label: capitalize(key) }} size="sm" />
+                  </th>
+                  <td>{summary.w[key] || 0}</td>
+                  <td>{summary.b[key] || 0}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
+      )}
 
       <section className="panel-section move-history">
         <h2 className="panel-heading">Moves</h2>
@@ -67,14 +115,18 @@ export default function ReviewPanel({ positions, index, evals, headers, analyzin
                 >
                   {p.white.san}
                 </button>
+                <MoveQualityBadge classification={classifications[p.white.ply]} size="sm" />
                 {p.black && (
-                  <button
-                    type="button"
-                    className={`move-history__move${index === p.black.ply ? ' is-current' : ''}`}
-                    onClick={() => onGoTo(p.black.ply)}
-                  >
-                    {p.black.san}
-                  </button>
+                  <>
+                    <button
+                      type="button"
+                      className={`move-history__move${index === p.black.ply ? ' is-current' : ''}`}
+                      onClick={() => onGoTo(p.black.ply)}
+                    >
+                      {p.black.san}
+                    </button>
+                    <MoveQualityBadge classification={classifications[p.black.ply]} size="sm" />
+                  </>
                 )}
               </li>
             ))}
@@ -94,4 +146,8 @@ export default function ReviewPanel({ positions, index, evals, headers, analyzin
       </section>
     </>
   )
+}
+
+function capitalize(key) {
+  return key.charAt(0).toUpperCase() + key.slice(1)
 }

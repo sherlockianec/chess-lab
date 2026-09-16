@@ -130,20 +130,34 @@ engine more time/depth — it is not artificially held back.
 Reviewing a game — reached from the game-over dialog's "Analyze game" button, or
 by pasting a PGN in on the setup screen — loads every position in that game and
 asks Stockfish for a quick (capped-depth, ~400ms) evaluation of each one in the
-background, filling in the graph progressively as they come back. Clicking
-anywhere on the graph, or any move in the list, jumps the board to that point.
-This reuses the same engine Worker as live play; nothing extra to load.
+background, filling in the graph progressively as they come back. The graph
+itself is styled like a territory map: White's share fills from the bottom,
+Black's from the top, split by a smoothed line at the current evaluation, with a
+dashed line marking equality. Clicking anywhere on the graph, or any move in the
+list, jumps the board to that point. This reuses the same engine Worker as live
+play; nothing extra to load.
+
+Each move is also labeled — Brilliant, Great, Best, Excellent, Good, Book,
+Inaccuracy, Mistake, Miss, or Blunder — based on how much evaluation it cost
+compared to the position's best continuation, with per-side totals shown above
+the move list. This is an original, documented approximation
+(`src/lib/moveClassification.js`) inspired by the kind of annotations
+lichess/chess.com-style tools use, not a reproduction of any specific product's
+algorithm — there's no real opening book behind "Book", for instance.
 
 ### The "Uzbek Lab" piece set
 
 An original, minimalist piece set (not a reskin of an existing one) drawing on
 Central Asian / Timurid visual motifs rather than the usual Staunton silhouette:
-a domed king and star finials, a scalloped crown for the queen, a
-muqarnas-crenellated fortress tower for the rook, a horse-head knight, and —
-since this square was historically an elephant (*alfil*) in the Persian/Central
-Asian chess tradition rather than a bishop — small tusk-curls on that piece. It's
-a first pass at a hard, subjective design brief; the shape-generating code is in
-`scripts/build-uzbek-pieces.mjs` if you'd like to push the style further.
+a domed king with a cross-and-star finial, a sharply-pointed crown for the
+queen, a crenellated fortress tower for the rook, a horse-head knight, a bishop
+with the classic mitre slit plus small tusk-curls — a nod to the historical
+elephant (*alfil*) that occupied this square in the Persian/Central Asian chess
+tradition — and a simple domed pawn. It's a first pass at a hard, subjective
+design brief; the shape-generating code is in `scripts/build-uzbek-pieces.mjs`
+if you'd like to push the style further — run `node scripts/build-uzbek-pieces.mjs`
+after editing it (or the SVGs directly) to regenerate the actual piece files and
+stylesheet.
 
 ### The position editor
 
@@ -168,9 +182,6 @@ rather than half-finishing more:
 - Stockfish "resigning" isn't modeled — only the human player can resign.
 - A flagged clock always loses, even in the (rare) case the opponent has no
   possible way to checkmate — most casual chess clocks work this way too.
-- The piece **palette** swatches use plain text glyphs regardless of the chosen
-  piece set — only the board itself shows the Uzbek/classic artwork. The
-  palette's job is picking a piece type, not matching the board's theme.
 
 ## License
 

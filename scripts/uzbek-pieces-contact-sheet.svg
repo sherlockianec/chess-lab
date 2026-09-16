@@ -1,137 +1,155 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 100"><g transform="translate(0,0)"><rect width="50" height="50" fill="#ead9b8"/><g transform="translate(2.5,2.5)">
   <g fill="#f2e8d5" stroke="#241c10" stroke-width="1" stroke-linejoin="round">
     <style>.piece-band{fill:#b5883f;stroke:none}.piece-line{stroke:#241c10;stroke-width:1.1}.piece-eye{fill:#241c10;stroke:none}</style>
-    <path d="M 10.50 34 Q 10.50 25.75 16.00 19 L 29.00 19 Q 34.50 25.75 34.50 34 Z" />
+    <path d="M 10.50 34
+    Q 10.50 25.30 16.20 19
+    L 28.80 19
+    Q 34.50 25.30 34.50 34 Z" />
   <rect x="9.50" y="34" width="26.00" height="4" rx="1.6" /><rect x="8.00" y="38" width="29.00" height="2.6" rx="1.3" />
-  <rect x="21.50" y="12" width="2" height="7" rx="1" />
-  M 15.50 19.00 C 15.50 10.95 18.65 12.00 22.5 12.00 C 26.35 12.00 29.50 10.95 29.50 19.00 Z
-  <path d="M 22.50,4.90 L 23.42,7.08 L 25.60,8.00 L 23.42,8.92 L 22.50,11.10 L 21.58,8.92 L 19.40,8.00 L 21.58,7.08 Z" />
-  <rect x="14.00" y="26" width="17" height="2.4" rx="1.2" class="piece-band" />
+  <rect x="14.00" y="25.5" width="17" height="2.4" rx="1.2" class="piece-band" />
+  <circle cx="22.5" cy="17.5" r="6.6" />
+  <rect x="14.50" y="21.5" width="16" height="2.6" rx="1" />
+  <rect x="21.40" y="7" width="2.2" height="8" rx="0.6" />
+  <rect x="19.10" y="9.6" width="6.8" height="2.2" rx="0.6" />
   </g>
 </g></g><g transform="translate(50,0)"><rect width="50" height="50" fill="#7c5a3c"/><g transform="translate(2.5,2.5)">
   <g fill="#1c150c" stroke="#f2e8d5" stroke-width="1" stroke-linejoin="round">
     <style>.piece-band{fill:#c9a668;stroke:none}.piece-line{stroke:#f2e8d5;stroke-width:1.1}.piece-eye{fill:#f2e8d5;stroke:none}</style>
-    <path d="M 10.50 34 Q 10.50 25.75 16.00 19 L 29.00 19 Q 34.50 25.75 34.50 34 Z" />
+    <path d="M 10.50 34
+    Q 10.50 25.30 16.20 19
+    L 28.80 19
+    Q 34.50 25.30 34.50 34 Z" />
   <rect x="9.50" y="34" width="26.00" height="4" rx="1.6" /><rect x="8.00" y="38" width="29.00" height="2.6" rx="1.3" />
-  <rect x="21.50" y="12" width="2" height="7" rx="1" />
-  M 15.50 19.00 C 15.50 10.95 18.65 12.00 22.5 12.00 C 26.35 12.00 29.50 10.95 29.50 19.00 Z
-  <path d="M 22.50,4.90 L 23.42,7.08 L 25.60,8.00 L 23.42,8.92 L 22.50,11.10 L 21.58,8.92 L 19.40,8.00 L 21.58,7.08 Z" />
-  <rect x="14.00" y="26" width="17" height="2.4" rx="1.2" class="piece-band" />
+  <rect x="14.00" y="25.5" width="17" height="2.4" rx="1.2" class="piece-band" />
+  <circle cx="22.5" cy="17.5" r="6.6" />
+  <rect x="14.50" y="21.5" width="16" height="2.6" rx="1" />
+  <rect x="21.40" y="7" width="2.2" height="8" rx="0.6" />
+  <rect x="19.10" y="9.6" width="6.8" height="2.2" rx="0.6" />
   </g>
 </g></g><g transform="translate(100,0)"><rect width="50" height="50" fill="#ead9b8"/><g transform="translate(2.5,2.5)">
   <g fill="#f2e8d5" stroke="#241c10" stroke-width="1" stroke-linejoin="round">
     <style>.piece-band{fill:#b5883f;stroke:none}.piece-line{stroke:#241c10;stroke-width:1.1}.piece-eye{fill:#241c10;stroke:none}</style>
-    <path d="M 11.00 34 Q 11.00 26.30 16.50 20 L 28.50 20 Q 34.00 26.30 34.00 34 Z" />
-  <rect x="10.00" y="34" width="25.00" height="4" rx="1.6" /><rect x="8.50" y="38" width="28.00" height="2.6" rx="1.3" />
-  <path d="M 13.50 22 L 13.50 16 Q 15.30 12 17.10 16.00 L 17.10 16 Q 18.90 12 20.70 16.00 L 20.70 16 Q 22.50 12 24.30 16.00 L 24.30 16 Q 26.10 12 27.90 16.00 L 27.90 16 Q 29.70 12 31.50 16.00 L 31.50 22 Z" />
-  <path d="M 22.50,8.60 L 23.07,9.93 L 24.40,10.50 L 23.07,11.07 L 22.50,12.40 L 21.93,11.07 L 20.60,10.50 L 21.93,9.93 Z" />
-  <path d="M 16.50,14.20 L 16.89,15.11 L 17.80,15.50 L 16.89,15.89 L 16.50,16.80 L 16.11,15.89 L 15.20,15.50 L 16.11,15.11 Z" />
-  <path d="M 28.50,14.20 L 28.89,15.11 L 29.80,15.50 L 28.89,15.89 L 28.50,16.80 L 28.11,15.89 L 27.20,15.50 L 28.11,15.11 Z" />
+    <path d="M 11.50 34
+    Q 11.50 26.46 16.90 21
+    L 28.10 21
+    Q 33.50 26.46 33.50 34 Z" />
+  <rect x="10.50" y="34" width="24.00" height="4" rx="1.6" /><rect x="9.00" y="38" width="27.00" height="2.6" rx="1.3" />
+  <path d="M 12.50 22 L 12.50 19 L 12.50 19 L 14.50 12 L 16.50 19 L 16.50 19 L 18.50 12 L 20.50 19 L 20.50 19 L 22.50 9 L 24.50 19 L 24.50 19 L 26.50 12 L 28.50 19 L 28.50 19 L 30.50 12 L 32.50 19 L 32.50 19 L 32.50 22 Z" />
+  <path d="M 14.50,8.80 L 14.92,9.88 L 16.00,10.30 L 14.92,10.72 L 14.50,11.80 L 14.08,10.72 L 13.00,10.30 L 14.08,9.88 Z" /><path d="M 18.50,8.80 L 18.92,9.88 L 20.00,10.30 L 18.92,10.72 L 18.50,11.80 L 18.08,10.72 L 17.00,10.30 L 18.08,9.88 Z" /><path d="M 22.50,5.80 L 22.92,6.88 L 24.00,7.30 L 22.92,7.72 L 22.50,8.80 L 22.08,7.72 L 21.00,7.30 L 22.08,6.88 Z" /><path d="M 26.50,8.80 L 26.92,9.88 L 28.00,10.30 L 26.92,10.72 L 26.50,11.80 L 26.08,10.72 L 25.00,10.30 L 26.08,9.88 Z" /><path d="M 30.50,8.80 L 30.92,9.88 L 32.00,10.30 L 30.92,10.72 L 30.50,11.80 L 30.08,10.72 L 29.00,10.30 L 30.08,9.88 Z" />
   </g>
 </g></g><g transform="translate(150,0)"><rect width="50" height="50" fill="#7c5a3c"/><g transform="translate(2.5,2.5)">
   <g fill="#1c150c" stroke="#f2e8d5" stroke-width="1" stroke-linejoin="round">
     <style>.piece-band{fill:#c9a668;stroke:none}.piece-line{stroke:#f2e8d5;stroke-width:1.1}.piece-eye{fill:#f2e8d5;stroke:none}</style>
-    <path d="M 11.00 34 Q 11.00 26.30 16.50 20 L 28.50 20 Q 34.00 26.30 34.00 34 Z" />
-  <rect x="10.00" y="34" width="25.00" height="4" rx="1.6" /><rect x="8.50" y="38" width="28.00" height="2.6" rx="1.3" />
-  <path d="M 13.50 22 L 13.50 16 Q 15.30 12 17.10 16.00 L 17.10 16 Q 18.90 12 20.70 16.00 L 20.70 16 Q 22.50 12 24.30 16.00 L 24.30 16 Q 26.10 12 27.90 16.00 L 27.90 16 Q 29.70 12 31.50 16.00 L 31.50 22 Z" />
-  <path d="M 22.50,8.60 L 23.07,9.93 L 24.40,10.50 L 23.07,11.07 L 22.50,12.40 L 21.93,11.07 L 20.60,10.50 L 21.93,9.93 Z" />
-  <path d="M 16.50,14.20 L 16.89,15.11 L 17.80,15.50 L 16.89,15.89 L 16.50,16.80 L 16.11,15.89 L 15.20,15.50 L 16.11,15.11 Z" />
-  <path d="M 28.50,14.20 L 28.89,15.11 L 29.80,15.50 L 28.89,15.89 L 28.50,16.80 L 28.11,15.89 L 27.20,15.50 L 28.11,15.11 Z" />
+    <path d="M 11.50 34
+    Q 11.50 26.46 16.90 21
+    L 28.10 21
+    Q 33.50 26.46 33.50 34 Z" />
+  <rect x="10.50" y="34" width="24.00" height="4" rx="1.6" /><rect x="9.00" y="38" width="27.00" height="2.6" rx="1.3" />
+  <path d="M 12.50 22 L 12.50 19 L 12.50 19 L 14.50 12 L 16.50 19 L 16.50 19 L 18.50 12 L 20.50 19 L 20.50 19 L 22.50 9 L 24.50 19 L 24.50 19 L 26.50 12 L 28.50 19 L 28.50 19 L 30.50 12 L 32.50 19 L 32.50 19 L 32.50 22 Z" />
+  <path d="M 14.50,8.80 L 14.92,9.88 L 16.00,10.30 L 14.92,10.72 L 14.50,11.80 L 14.08,10.72 L 13.00,10.30 L 14.08,9.88 Z" /><path d="M 18.50,8.80 L 18.92,9.88 L 20.00,10.30 L 18.92,10.72 L 18.50,11.80 L 18.08,10.72 L 17.00,10.30 L 18.08,9.88 Z" /><path d="M 22.50,5.80 L 22.92,6.88 L 24.00,7.30 L 22.92,7.72 L 22.50,8.80 L 22.08,7.72 L 21.00,7.30 L 22.08,6.88 Z" /><path d="M 26.50,8.80 L 26.92,9.88 L 28.00,10.30 L 26.92,10.72 L 26.50,11.80 L 26.08,10.72 L 25.00,10.30 L 26.08,9.88 Z" /><path d="M 30.50,8.80 L 30.92,9.88 L 32.00,10.30 L 30.92,10.72 L 30.50,11.80 L 30.08,10.72 L 29.00,10.30 L 30.08,9.88 Z" />
   </g>
 </g></g><g transform="translate(200,0)"><rect width="50" height="50" fill="#ead9b8"/><g transform="translate(2.5,2.5)">
   <g fill="#f2e8d5" stroke="#241c10" stroke-width="1" stroke-linejoin="round">
     <style>.piece-band{fill:#b5883f;stroke:none}.piece-line{stroke:#241c10;stroke-width:1.1}.piece-eye{fill:#241c10;stroke:none}</style>
     <path d="M 13.00 34 L 14.50 15 L 30.50 15 L 32.00 34 Z" />
   <rect x="12.00" y="34" width="21.00" height="4" rx="1.6" /><rect x="10.50" y="38" width="24.00" height="2.6" rx="1.3" />
-  <rect x="13.50" y="13.5" width="18" height="4" rx="0.6" />
-  <rect x="14.50" y="9" width="2.6" height="4.5" /><rect x="19.00" y="9" width="2.6" height="4.5" /><rect x="23.50" y="9" width="2.6" height="4.5" /><rect x="28.00" y="9" width="2.6" height="4.5" />
-  <rect x="16.50" y="22" width="12" height="2.2" rx="1.1" class="piece-band" />
+  <rect x="13.30" y="13" width="18.4" height="4.5" rx="0.6" />
+  <rect x="14.30" y="8.5" width="3" height="5" /><rect x="18.80" y="8.5" width="3" height="5" /><rect x="23.30" y="8.5" width="3" height="5" /><rect x="27.80" y="8.5" width="3" height="5" />
+  <rect x="16.50" y="23" width="12" height="2.2" rx="1.1" class="piece-band" />
   </g>
 </g></g><g transform="translate(250,0)"><rect width="50" height="50" fill="#7c5a3c"/><g transform="translate(2.5,2.5)">
   <g fill="#1c150c" stroke="#f2e8d5" stroke-width="1" stroke-linejoin="round">
     <style>.piece-band{fill:#c9a668;stroke:none}.piece-line{stroke:#f2e8d5;stroke-width:1.1}.piece-eye{fill:#f2e8d5;stroke:none}</style>
     <path d="M 13.00 34 L 14.50 15 L 30.50 15 L 32.00 34 Z" />
   <rect x="12.00" y="34" width="21.00" height="4" rx="1.6" /><rect x="10.50" y="38" width="24.00" height="2.6" rx="1.3" />
-  <rect x="13.50" y="13.5" width="18" height="4" rx="0.6" />
-  <rect x="14.50" y="9" width="2.6" height="4.5" /><rect x="19.00" y="9" width="2.6" height="4.5" /><rect x="23.50" y="9" width="2.6" height="4.5" /><rect x="28.00" y="9" width="2.6" height="4.5" />
-  <rect x="16.50" y="22" width="12" height="2.2" rx="1.1" class="piece-band" />
+  <rect x="13.30" y="13" width="18.4" height="4.5" rx="0.6" />
+  <rect x="14.30" y="8.5" width="3" height="5" /><rect x="18.80" y="8.5" width="3" height="5" /><rect x="23.30" y="8.5" width="3" height="5" /><rect x="27.80" y="8.5" width="3" height="5" />
+  <rect x="16.50" y="23" width="12" height="2.2" rx="1.1" class="piece-band" />
   </g>
 </g></g><g transform="translate(0,50)"><rect width="50" height="50" fill="#7c5a3c"/><g transform="translate(2.5,2.5)">
   <g fill="#f2e8d5" stroke="#241c10" stroke-width="1" stroke-linejoin="round">
     <style>.piece-band{fill:#b5883f;stroke:none}.piece-line{stroke:#241c10;stroke-width:1.1}.piece-eye{fill:#241c10;stroke:none}</style>
-    <path d="M 14.00 34 Q 14.00 26.30 18.30 20 L 26.70 20 Q 31.00 26.30 31.00 34 Z" />
-  <rect x="13.00" y="34" width="19.00" height="4" rx="1.6" /><rect x="11.50" y="38" width="22.00" height="2.6" rx="1.3" />
-  <circle cx="22.5" cy="16" r="6.2" />
-  <path d="M 16.90 18.5 C 14.50 19.5 14.50 22 16.70 22.6" fill="none" class="piece-line" stroke-linecap="round" />
-  <path d="M 28.10 18.5 C 30.50 19.5 30.50 22 28.30 22.6" fill="none" class="piece-line" stroke-linecap="round" />
-  <path d="M 22.50,5.30 L 22.99,6.51 L 24.20,7.00 L 22.99,7.49 L 22.50,8.70 L 22.01,7.49 L 20.80,7.00 L 22.01,6.51 Z" />
+    <path d="M 13.50 34
+    Q 13.50 26.46 18.10 21
+    L 26.90 21
+    Q 31.50 26.46 31.50 34 Z" />
+  <rect x="12.50" y="34" width="20.00" height="4" rx="1.6" /><rect x="11.00" y="38" width="23.00" height="2.6" rx="1.3" />
+  <circle cx="22.5" cy="17.5" r="6.2" />
+  <circle cx="22.5" cy="8.6" r="1.7" />
+  <rect x="15.00" y="24.5" width="15" height="2.4" rx="1.2" class="piece-band" />
+  <path d="M 16.70 19 C 13.90 19.9 13.90 22.8 16.50 23.4" fill="none" class="piece-line" stroke-linecap="round" stroke-width="1.3" />
+  <path d="M 28.30 19 C 31.10 19.9 31.10 22.8 28.50 23.4" fill="none" class="piece-line" stroke-linecap="round" stroke-width="1.3" />
+  <path d="M 18.10 12.2 L 26.10 19.4" fill="none" class="piece-line" stroke-linecap="round" stroke-width="1.8" />
   </g>
 </g></g><g transform="translate(50,50)"><rect width="50" height="50" fill="#ead9b8"/><g transform="translate(2.5,2.5)">
   <g fill="#1c150c" stroke="#f2e8d5" stroke-width="1" stroke-linejoin="round">
     <style>.piece-band{fill:#c9a668;stroke:none}.piece-line{stroke:#f2e8d5;stroke-width:1.1}.piece-eye{fill:#f2e8d5;stroke:none}</style>
-    <path d="M 14.00 34 Q 14.00 26.30 18.30 20 L 26.70 20 Q 31.00 26.30 31.00 34 Z" />
-  <rect x="13.00" y="34" width="19.00" height="4" rx="1.6" /><rect x="11.50" y="38" width="22.00" height="2.6" rx="1.3" />
-  <circle cx="22.5" cy="16" r="6.2" />
-  <path d="M 16.90 18.5 C 14.50 19.5 14.50 22 16.70 22.6" fill="none" class="piece-line" stroke-linecap="round" />
-  <path d="M 28.10 18.5 C 30.50 19.5 30.50 22 28.30 22.6" fill="none" class="piece-line" stroke-linecap="round" />
-  <path d="M 22.50,5.30 L 22.99,6.51 L 24.20,7.00 L 22.99,7.49 L 22.50,8.70 L 22.01,7.49 L 20.80,7.00 L 22.01,6.51 Z" />
+    <path d="M 13.50 34
+    Q 13.50 26.46 18.10 21
+    L 26.90 21
+    Q 31.50 26.46 31.50 34 Z" />
+  <rect x="12.50" y="34" width="20.00" height="4" rx="1.6" /><rect x="11.00" y="38" width="23.00" height="2.6" rx="1.3" />
+  <circle cx="22.5" cy="17.5" r="6.2" />
+  <circle cx="22.5" cy="8.6" r="1.7" />
+  <rect x="15.00" y="24.5" width="15" height="2.4" rx="1.2" class="piece-band" />
+  <path d="M 16.70 19 C 13.90 19.9 13.90 22.8 16.50 23.4" fill="none" class="piece-line" stroke-linecap="round" stroke-width="1.3" />
+  <path d="M 28.30 19 C 31.10 19.9 31.10 22.8 28.50 23.4" fill="none" class="piece-line" stroke-linecap="round" stroke-width="1.3" />
+  <path d="M 18.10 12.2 L 26.10 19.4" fill="none" class="piece-line" stroke-linecap="round" stroke-width="1.8" />
   </g>
 </g></g><g transform="translate(100,50)"><rect width="50" height="50" fill="#7c5a3c"/><g transform="translate(2.5,2.5)">
   <g fill="#f2e8d5" stroke="#241c10" stroke-width="1" stroke-linejoin="round">
     <style>.piece-band{fill:#b5883f;stroke:none}.piece-line{stroke:#241c10;stroke-width:1.1}.piece-eye{fill:#241c10;stroke:none}</style>
-    <rect x="12.50" y="34" width="20.00" height="4" rx="1.6" /><rect x="11.00" y="38" width="23.00" height="2.6" rx="1.3" />
-  <path d="M 14 34
-           Q 12.5 24 14 16
-           L 13.5 10
-           L 15.5 5 L 17.5 9 L 19.5 4.5 L 21 9
-           L 21.5 13
-           L 24 14.5
-           L 30 14.5
-           L 33 15.5
-           L 32.5 18
-           L 29 18
-           L 30 19.5
-           L 26 21
-           L 24 25
-           Q 27 27 28 29
-           Q 29.5 31.5 30 34
+    <rect x="12.00" y="34" width="21.00" height="4" rx="1.6" /><rect x="10.50" y="38" width="24.00" height="2.6" rx="1.3" />
+  <path d="M 13 34
+           C 11.8 26 12.6 20.5 15.5 15.5
+           C 17.3 12.3 19.6 9.8 22.7 8.3
+           C 21.9 9.6 21.8 10.7 22.6 11.5
+           C 26.5 11.1 30.5 13 33.4 17.4
+           C 34.1 18.5 33.7 19.6 32.4 19.6
+           C 31.6 18.3 30.2 17.6 28.8 18
+           L 29.6 20.3 L 26.6 19.6
+           C 25.4 21 25.6 22.7 27 24
+           C 23.6 24.6 21.4 26.7 20.8 29.6
+           C 20.5 31.1 20.8 32.6 21.6 34
            Z" />
-  <circle cx="26.5" cy="13" r="0.8" class="piece-eye" />
+  <circle cx="25.4" cy="12.6" r="0.9" class="piece-eye" />
   </g>
 </g></g><g transform="translate(150,50)"><rect width="50" height="50" fill="#ead9b8"/><g transform="translate(2.5,2.5)">
   <g fill="#1c150c" stroke="#f2e8d5" stroke-width="1" stroke-linejoin="round">
     <style>.piece-band{fill:#c9a668;stroke:none}.piece-line{stroke:#f2e8d5;stroke-width:1.1}.piece-eye{fill:#f2e8d5;stroke:none}</style>
-    <rect x="12.50" y="34" width="20.00" height="4" rx="1.6" /><rect x="11.00" y="38" width="23.00" height="2.6" rx="1.3" />
-  <path d="M 14 34
-           Q 12.5 24 14 16
-           L 13.5 10
-           L 15.5 5 L 17.5 9 L 19.5 4.5 L 21 9
-           L 21.5 13
-           L 24 14.5
-           L 30 14.5
-           L 33 15.5
-           L 32.5 18
-           L 29 18
-           L 30 19.5
-           L 26 21
-           L 24 25
-           Q 27 27 28 29
-           Q 29.5 31.5 30 34
+    <rect x="12.00" y="34" width="21.00" height="4" rx="1.6" /><rect x="10.50" y="38" width="24.00" height="2.6" rx="1.3" />
+  <path d="M 13 34
+           C 11.8 26 12.6 20.5 15.5 15.5
+           C 17.3 12.3 19.6 9.8 22.7 8.3
+           C 21.9 9.6 21.8 10.7 22.6 11.5
+           C 26.5 11.1 30.5 13 33.4 17.4
+           C 34.1 18.5 33.7 19.6 32.4 19.6
+           C 31.6 18.3 30.2 17.6 28.8 18
+           L 29.6 20.3 L 26.6 19.6
+           C 25.4 21 25.6 22.7 27 24
+           C 23.6 24.6 21.4 26.7 20.8 29.6
+           C 20.5 31.1 20.8 32.6 21.6 34
            Z" />
-  <circle cx="26.5" cy="13" r="0.8" class="piece-eye" />
+  <circle cx="25.4" cy="12.6" r="0.9" class="piece-eye" />
   </g>
 </g></g><g transform="translate(200,50)"><rect width="50" height="50" fill="#7c5a3c"/><g transform="translate(2.5,2.5)">
   <g fill="#f2e8d5" stroke="#241c10" stroke-width="1" stroke-linejoin="round">
     <style>.piece-band{fill:#b5883f;stroke:none}.piece-line{stroke:#241c10;stroke-width:1.1}.piece-eye{fill:#241c10;stroke:none}</style>
-    M 17.10 18.00 C 17.10 11.79 19.53 12.60 22.5 12.60 C 25.47 12.60 27.90 11.79 27.90 18.00 Z
-  <path d="M 14.00 33 Q 14.00 26.40 18.90 21 L 26.10 21 Q 31.00 26.40 31.00 33 Z" />
+    <circle cx="22.5" cy="16.5" r="5.6" />
+  <path d="M 14.00 33
+    Q 14.00 25.17 18.90 19.5
+    L 26.10 19.5
+    Q 31.00 25.17 31.00 33 Z" />
   <rect x="13.00" y="33" width="19.00" height="4" rx="1.6" /><rect x="11.50" y="37" width="22.00" height="2.6" rx="1.3" />
   </g>
 </g></g><g transform="translate(250,50)"><rect width="50" height="50" fill="#ead9b8"/><g transform="translate(2.5,2.5)">
   <g fill="#1c150c" stroke="#f2e8d5" stroke-width="1" stroke-linejoin="round">
     <style>.piece-band{fill:#c9a668;stroke:none}.piece-line{stroke:#f2e8d5;stroke-width:1.1}.piece-eye{fill:#f2e8d5;stroke:none}</style>
-    M 17.10 18.00 C 17.10 11.79 19.53 12.60 22.5 12.60 C 25.47 12.60 27.90 11.79 27.90 18.00 Z
-  <path d="M 14.00 33 Q 14.00 26.40 18.90 21 L 26.10 21 Q 31.00 26.40 31.00 33 Z" />
+    <circle cx="22.5" cy="16.5" r="5.6" />
+  <path d="M 14.00 33
+    Q 14.00 25.17 18.90 19.5
+    L 26.10 19.5
+    Q 31.00 25.17 31.00 33 Z" />
   <rect x="13.00" y="33" width="19.00" height="4" rx="1.6" /><rect x="11.50" y="37" width="22.00" height="2.6" rx="1.3" />
   </g>
 </g></g></svg>
