@@ -1,4 +1,17 @@
+import { useEffect, useRef } from 'react'
+
 export default function MoveHistory({ history, visible }) {
+  const listRef = useRef(null)
+
+  // Keep the latest moves in view by default -- scroll to the bottom whenever a
+  // move is added, the same way a chat or log view behaves. The person can still
+  // scroll up freely to review earlier moves; the next move just resets to the
+  // bottom again, which is the expected "log" behavior rather than fighting it.
+  useEffect(() => {
+    const el = listRef.current
+    if (el) el.scrollTop = el.scrollHeight
+  }, [history.length])
+
   if (!visible) return null
 
   const pairs = []
@@ -12,7 +25,7 @@ export default function MoveHistory({ history, visible }) {
       {pairs.length === 0 ? (
         <p className="hint-text">No moves yet.</p>
       ) : (
-        <ol className="move-history__list">
+        <ol className="move-history__list" ref={listRef}>
           {pairs.map((p) => (
             <li key={p.number}>
               <span className="move-history__num">{p.number}.</span>

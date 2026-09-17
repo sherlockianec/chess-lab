@@ -125,7 +125,7 @@ const colors = {
 }
 
 function wrapSvg(inner, color) {
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}">
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
   <g fill="${color.fill}" stroke="${color.stroke}" stroke-width="1" stroke-linejoin="round">
     <style>.piece-band{fill:${color.band};stroke:none}.piece-line{stroke:${color.line};stroke-width:1.1}.piece-eye{fill:${color.eye};stroke:none}</style>
     ${inner}

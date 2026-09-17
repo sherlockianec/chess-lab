@@ -16,6 +16,8 @@ import ClockDisplay from './components/ClockDisplay.jsx'
 import ReviewPanel from './components/ReviewPanel.jsx'
 import PgnImportPanel from './components/PgnImportPanel.jsx'
 import CopyButton from './components/CopyButton.jsx'
+import CapturedPiecesBar from './components/CapturedPiecesBar.jsx'
+import MoveQualityMarker from './components/MoveQualityMarker.jsx'
 import { useChessGame } from './hooks/useChessGame.js'
 import { useStockfish } from './hooks/useStockfish.js'
 import { useClock } from './hooks/useClock.js'
@@ -26,6 +28,8 @@ import { validatePosition } from './lib/positionValidation.js'
 import { resolveTimeControl } from './lib/timeControl.js'
 import { getTier } from './lib/difficulty.js'
 import { buildPgn, parsePgn } from './lib/pgn.js'
+import { materialSummary } from './lib/material.js'
+import { classifyMoves } from './lib/moveClassification.js'
 import { opponentOf, toFullColor } from './lib/color.js'
 import './App.css'
 
@@ -393,6 +397,19 @@ export default function App() {
         ? [reviewPosition.from, reviewPosition.to]
         : undefined
 
+  // Lifted up (rather than computed inside ReviewPanel) so the on-board marker
+  // below can use the same result without a second pass over the same data.
+  const classifications = useMemo(
+    () => (phase === 'review' && review.active ? classifyMoves(review.positions, review.evals) : {}),
+    [phase, review.active, review.positions, review.evals],
+  )
+  const currentMoveQuality = phase === 'review' ? classifications[review.index] : null
+
+  const material = useMemo(() => {
+    if (phase === 'setup') return null
+    return materialSummary(boardFen.split(' ')[0])
+  }, [phase, boardFen])
+
   const evalBarValue = phase === 'review' ? review.evals[review.index] : engine.evaluation
 
   const bannerInfo = result.over
@@ -421,6 +438,14 @@ export default function App() {
 
       <main className="app-main">
         <div className="board-column">
+          <CapturedPiecesBar
+            material={material}
+            orientation={settings.orientation}
+            pieceSet={settings.pieceSet}
+            visible={phase !== 'setup'}
+            position="top"
+          />
+
           <ClockDisplay
             remaining={clock.remaining}
             activeColor={clock.activeColor}
@@ -449,6 +474,13 @@ export default function App() {
                 onSelect={phase === 'setup' ? handleEditorSquareSelect : undefined}
                 onChange={phase === 'setup' ? handleEditorBoardChange : undefined}
               />
+              {phase === 'review' && reviewPosition?.to && (
+                <MoveQualityMarker
+                  square={reviewPosition.to}
+                  orientation={settings.orientation}
+                  classification={currentMoveQuality}
+                />
+              )}
               {pendingPromotion && (
                 <PromotionPicker
                   color={pendingPromotion.color}
@@ -459,6 +491,14 @@ export default function App() {
               )}
             </div>
           </div>
+
+          <CapturedPiecesBar
+            material={material}
+            orientation={settings.orientation}
+            pieceSet={settings.pieceSet}
+            visible={phase !== 'setup'}
+            position="bottom"
+          />
 
           {phase === 'setup' && (
             <>
@@ -607,6 +647,7 @@ export default function App() {
               positions={review.positions}
               index={review.index}
               evals={review.evals}
+              classifications={classifications}
               headers={review.headers}
               analyzing={reviewAnalyzing}
               onGoTo={review.goTo}

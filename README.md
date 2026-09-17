@@ -139,11 +139,22 @@ play; nothing extra to load.
 
 Each move is also labeled — Brilliant, Great, Best, Excellent, Good, Book,
 Inaccuracy, Mistake, Miss, or Blunder — based on how much evaluation it cost
-compared to the position's best continuation, with per-side totals shown above
+compared to the position's best continuation, with a distinct symbol per
+category (`!!`, `!`, `✓`, `?!`, `??`, ...) shown both in the move list and as a
+small marker on the board square the move landed on, plus per-side totals above
 the move list. This is an original, documented approximation
 (`src/lib/moveClassification.js`) inspired by the kind of annotations
 lichess/chess.com-style tools use, not a reproduction of any specific product's
 algorithm — there's no real opening book behind "Book", for instance.
+
+### Captured pieces and material balance
+
+Above and below the board, each side's captured trophies are shown — the
+opposing-color pieces that side has taken off the board — along with that
+side's own signed point differential using the standard 1/3/3/5/9 point values
+(`src/lib/material.js`). This is derived purely by comparing the current
+position's piece counts to a full starting army, so it works identically for
+live play, review, and any pasted PGN.
 
 ### The "Uzbek Lab" piece set
 

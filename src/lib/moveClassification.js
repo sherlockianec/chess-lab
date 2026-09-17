@@ -23,6 +23,23 @@ const LABELS = {
   blunder: 'Blunder',
 }
 
+// A distinct mark per category for the on-board annotation, loosely following
+// classical chess-notation punctuation (!!, !, ?!, ?, ??) where it already fits,
+// with a few new ones invented for categories that don't have a traditional
+// symbol (this is Chess Lab's own scheme, not a standard notation).
+const SYMBOLS = {
+  brilliant: '!!',
+  great: '!',
+  best: '✓',
+  excellent: '✔',
+  good: '○',
+  book: '≡',
+  inaccuracy: '?!',
+  mistake: '?',
+  miss: '⊘',
+  blunder: '??',
+}
+
 export const MOVE_QUALITY_ORDER = Object.keys(LABELS)
 
 const MATE_SCORE_BASE = 100000
@@ -99,10 +116,14 @@ export function classifyMoves(positions, evals) {
       key = beforeForMover > 150 ? 'miss' : 'blunder'
     }
 
-    results[i] = { key, label: LABELS[key], lossCp: Math.round(loss) }
+    results[i] = { key, label: LABELS[key], symbol: SYMBOLS[key], lossCp: Math.round(loss) }
   }
 
   return results
+}
+
+export function qualityInfo(key) {
+  return key ? { key, label: LABELS[key], symbol: SYMBOLS[key] } : null
 }
 
 /** { w: { brilliant: 2, best: 5, ... }, b: { ... } }, only counting classified plies. */

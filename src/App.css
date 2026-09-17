@@ -925,3 +925,84 @@ input[type='range'] {
   flex-wrap: wrap;
   row-gap: 2px;
 }
+
+/* Captured pieces / material tracker ----------------------------------------- */
+
+.captured-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 22px;
+  width: 100%;
+  max-width: 640px;
+  padding: 0 2px;
+}
+.captured-row__icons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1px;
+}
+.captured-piece {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+.captured-piece img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.captured-piece__count {
+  position: absolute;
+  bottom: -2px;
+  right: -4px;
+  font-size: 9px;
+  font-weight: 700;
+  background: var(--bg-panel);
+  color: var(--text-muted);
+  border-radius: 5px;
+  padding: 0 2px;
+  line-height: 1.3;
+}
+.captured-row__label {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--gold-bright);
+  font-variant-numeric: tabular-nums;
+  margin-left: 2px;
+}
+
+.quality-badge__symbol {
+  margin-right: 3px;
+  font-weight: 900;
+}
+
+.move-quality-marker {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 900;
+  color: #fff;
+  border: 2px solid rgba(0, 0, 0, 0.35);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+  pointer-events: none;
+  z-index: 4;
+}
+.move-quality-marker.quality-badge--brilliant { background: #26c6be; }
+.move-quality-marker.quality-badge--great { background: #38a89d; }
+.move-quality-marker.quality-badge--best { background: #4caf50; }
+.move-quality-marker.quality-badge--excellent { background: #8bc34a; }
+.move-quality-marker.quality-badge--good { background: #6c93c7; }
+.move-quality-marker.quality-badge--book { background: #a9825a; }
+.move-quality-marker.quality-badge--inaccuracy { background: #e0b24f; color: #241c10; }
+.move-quality-marker.quality-badge--mistake { background: #e08030; }
+.move-quality-marker.quality-badge--miss { background: #e06030; }
+.move-quality-marker.quality-badge--blunder { background: var(--danger); }

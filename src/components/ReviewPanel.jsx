@@ -1,15 +1,31 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import EvalGraph from './EvalGraph.jsx'
 import MoveQualityBadge from './MoveQualityBadge.jsx'
-import { MOVE_QUALITY_ORDER, classifyMoves, summarizeByColor } from '../lib/moveClassification.js'
+import { MOVE_QUALITY_ORDER, qualityInfo, summarizeByColor } from '../lib/moveClassification.js'
 
-export default function ReviewPanel({ positions, index, evals, headers, analyzing, onGoTo, onPrev, onNext, onExit, onExportPgn }) {
+export default function ReviewPanel({
+  positions,
+  index,
+  evals,
+  classifications,
+  headers,
+  analyzing,
+  onGoTo,
+  onPrev,
+  onNext,
+  onExit,
+  onExportPgn,
+}) {
   const [copyLabel, setCopyLabel] = useState('Copy PGN')
+  const currentMoveRef = useRef(null)
   const sanList = positions.slice(1).map((p) => p.san)
 
-  const classifications = useMemo(() => classifyMoves(positions, evals), [positions, evals])
   const summary = useMemo(() => summarizeByColor(positions, classifications), [positions, classifications])
-  const currentMoveQuality = classifications[index] // the move that LED to the position being viewed
+  const currentMoveQuality = classifications[index]
+
+  useEffect(() => {
+    currentMoveRef.current?.scrollIntoView({ block: 'nearest' })
+  }, [index])
 
   const pairs = []
   for (let i = 0; i < sanList.length; i += 2) {
@@ -56,7 +72,8 @@ export default function ReviewPanel({ positions, index, evals, headers, analyzin
             <>
               <MoveQualityBadge classification={currentMoveQuality} />
               <span className="hint-text hint-text--muted">
-                {positions[index].san} · {currentMoveQuality.lossCp === 0 ? 'no loss' : `${(currentMoveQuality.lossCp / 100).toFixed(2)} lost`}
+                {positions[index].san} ·{' '}
+                {currentMoveQuality.lossCp === 0 ? 'no loss' : `${(currentMoveQuality.lossCp / 100).toFixed(2)} lost`}
               </span>
             </>
           ) : (
@@ -88,7 +105,7 @@ export default function ReviewPanel({ positions, index, evals, headers, analyzin
               {summaryRows.map((key) => (
                 <tr key={key}>
                   <th scope="row">
-                    <MoveQualityBadge classification={{ key, label: capitalize(key) }} size="sm" />
+                    <MoveQualityBadge classification={qualityInfo(key)} size="sm" />
                   </th>
                   <td>{summary.w[key] || 0}</td>
                   <td>{summary.b[key] || 0}</td>
@@ -104,9 +121,9 @@ export default function ReviewPanel({ positions, index, evals, headers, analyzin
         {pairs.length === 0 ? (
           <p className="hint-text">No moves in this game.</p>
         ) : (
-          <ol className="move-history__list">
+          <ol className="move-history__list move-history__list--review">
             {pairs.map((p) => (
-              <li key={p.number}>
+              <li key={p.number} ref={index === p.white.ply || index === p.black?.ply ? currentMoveRef : null}>
                 <span className="move-history__num">{p.number}.</span>
                 <button
                   type="button"
@@ -146,8 +163,4 @@ export default function ReviewPanel({ positions, index, evals, headers, analyzin
       </section>
     </>
   )
-}
-
-function capitalize(key) {
-  return key.charAt(0).toUpperCase() + key.slice(1)
 }
