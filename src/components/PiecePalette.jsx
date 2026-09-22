@@ -9,7 +9,9 @@ const PALETTE = [
 ]
 
 const toolKey = (tool) => (tool && tool !== 'eraser' ? `${tool.color}-${tool.role}` : null)
-const DRAG_THRESHOLD_PX = 6
+// A little more forgiving than a mouse pointer needs, since a resting finger
+// naturally drifts a few pixels -- keeps an intended tap from misfiring as a drag.
+const DRAG_THRESHOLD_PX = 9
 
 /**
  * A grid of piece swatches plus an eraser tool, supporting two ways to place a
@@ -52,6 +54,10 @@ export default function PiecePalette({ pieceSet, activeTool, onSelectTool, onEra
         dragging = true
         cleanup()
         onDragStart(piece, e)
+      } else {
+        // Not committed to a drag yet, but block the page from scrolling out
+        // from under a finger that's about to start one.
+        e.preventDefault()
       }
     }
 

@@ -138,6 +138,16 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [result.over])
 
+  // Pass-and-play: reorient the board to face whoever is about to move, so
+  // each player sees it their way up without needing to physically rotate the
+  // device. The Flip board button still works normally on top of this if
+  // someone's actual seating doesn't match.
+  useEffect(() => {
+    if (phase !== 'playing' || settings.playerColor !== 'human' || result.over) return
+    const facing = toFullColor(game.turn)
+    setSettings((s) => (s.orientation === facing ? s : { ...s, orientation: facing }))
+  }, [phase, settings.playerColor, game.turn, result.over, setSettings])
+
   const applyMove = useCallback(
     (move, moverLetter) => {
       const played = game.makeMove(move)
@@ -158,7 +168,14 @@ export default function App() {
       settings.engineMovesFirst &&
       settings.playerColor !== 'watch' &&
       game.turn === humanColorLetter
-    const isEngineTurn = settings.playerColor === 'watch' || game.turn !== humanColorLetter || isFirstMoveOverride
+    // humanColorLetter is null in human-vs-human mode, so "game.turn !==
+    // humanColorLetter" alone would always be true there -- explicitly rule
+    // that mode out rather than let a null comparison accidentally hand both
+    // sides to the engine.
+    const isEngineTurn =
+      settings.playerColor === 'watch' ||
+      (settings.playerColor !== 'human' && game.turn !== humanColorLetter) ||
+      isFirstMoveOverride
 
     if (!isEngineTurn) {
       if (settings.showEval) engine.analyze(game.fen, game.turn)
@@ -296,14 +313,22 @@ export default function App() {
 
     game.resetTo(validation.fen)
     engine.newGame()
-    setSettings((s) => ({ ...s, orientation: s.playerColor === 'black' ? 'black' : 'white' }))
+    setSettings((s) => ({
+      ...s,
+      orientation:
+        s.playerColor === 'human' ? toFullColor(validation.fen.split(' ')[1]) : s.playerColor === 'black' ? 'black' : 'white',
+    }))
     setPhase('playing')
     setGameSessionId((n) => n + 1)
   }
 
   const handleUndo = () => {
     engine.stop()
-    const takingBackOwnReply = settings.playerColor !== 'watch' && game.turn === humanColorLetter
+    // Only skip back an extra ply to get past the engine's reply when there's
+    // actually an engine involved -- in human-vs-human play every ply was
+    // someone's own decision, so a plain single-move undo is what "undo" means.
+    const takingBackOwnReply =
+      settings.playerColor !== 'watch' && settings.playerColor !== 'human' && game.turn === humanColorLetter
     game.undo(takingBackOwnReply ? 2 : 1)
   }
 
@@ -345,8 +370,11 @@ export default function App() {
   }
 
   const pgnHeadersForCurrentGame = () => {
-    const humanLabel = 'Human'
     const engineLabel = 'Stockfish'
+    if (settings.playerColor === 'human') {
+      return { Event: 'Chess Lab game', White: 'White', Black: 'Black', Result: pgnResultTag(result) }
+    }
+    const humanLabel = 'Human'
     return {
       Event: 'Chess Lab game',
       White: settings.playerColor === 'black' ? engineLabel : settings.playerColor === 'watch' ? engineLabel : humanLabel,
@@ -362,7 +390,10 @@ export default function App() {
     !result.over &&
     !pendingPromotion &&
     settings.playerColor !== 'watch' &&
-    game.turn === humanColorLetter &&
+    // In human-vs-human mode every turn is a human's turn, regardless of
+    // color -- humanColorLetter is null there, so it can't be compared
+    // against game.turn the way the single-human modes are.
+    (settings.playerColor === 'human' || game.turn === humanColorLetter) &&
     !engine.thinking
 
   const dests = useMemo(() => {
@@ -377,7 +408,11 @@ export default function App() {
   }, [isHumanTurnNow, game.chess])
 
   const movableColor =
-    phase === 'setup' ? 'both' : settings.playerColor === 'watch' ? undefined : toFullColor(humanColorLetter)
+    phase === 'setup' || settings.playerColor === 'human'
+      ? 'both'
+      : settings.playerColor === 'watch'
+        ? undefined
+        : toFullColor(humanColorLetter)
 
   const reviewPosition = phase === 'review' && review.active ? review.positions[review.index] : null
   const reviewChess = useMemo(() => (reviewPosition ? new Chess(reviewPosition.fen) : null), [reviewPosition])
@@ -550,20 +585,22 @@ export default function App() {
                   onChange={(timeControl) => setSettings((s) => ({ ...s, timeControl }))}
                 />
               </div>
-              <DifficultyPanel
-                tierId={settings.difficultyTierId}
-                onTierChange={(id) =>
-                  setSettings((s) => ({
-                    ...s,
-                    difficultyTierId: id,
-                    movetimeMs: id === 'custom' ? s.movetimeMs : getTier(id).defaultMovetimeMs,
-                  }))
-                }
-                movetimeMs={settings.movetimeMs}
-                onMovetimeChange={(ms) => setSettings((s) => ({ ...s, movetimeMs: ms }))}
-                custom={settings.customDifficulty}
-                onCustomChange={(custom) => setSettings((s) => ({ ...s, customDifficulty: custom }))}
-              />
+              {settings.playerColor !== 'human' && (
+                <DifficultyPanel
+                  tierId={settings.difficultyTierId}
+                  onTierChange={(id) =>
+                    setSettings((s) => ({
+                      ...s,
+                      difficultyTierId: id,
+                      movetimeMs: id === 'custom' ? s.movetimeMs : getTier(id).defaultMovetimeMs,
+                    }))
+                  }
+                  movetimeMs={settings.movetimeMs}
+                  onMovetimeChange={(ms) => setSettings((s) => ({ ...s, movetimeMs: ms }))}
+                  custom={settings.customDifficulty}
+                  onCustomChange={(custom) => setSettings((s) => ({ ...s, customDifficulty: custom }))}
+                />
+              )}
               <PgnImportPanel onImport={handleImportPgn} />
               <section className="panel-section" aria-label="Appearance">
                 <h2 className="panel-heading">Appearance</h2>

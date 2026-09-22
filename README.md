@@ -58,6 +58,9 @@ No manual `gh-pages` branch or `npm run deploy` step needed — every push to
 - **Play against Stockfish** — choose White, Black, or watch it play both
   sides; six named difficulty tiers plus a fully manual Custom mode; adjustable
   thinking time; standard or custom clocks, or no clock at all.
+- **Two players, one device** — a local pass-and-play mode with no engine
+  involved at all; the board automatically reorients to face whoever's turn it
+  is.
 - **Game review** — after a game ends (or by pasting in any PGN), step through
   every move with a live evaluation graph, click any point on the graph or any
   move in the list to jump there.
@@ -65,6 +68,8 @@ No manual `gh-pages` branch or `npm run deploy` step needed — every push to
   it elsewhere, or paste one in to review it.
 - **Light and dark themes**, plus a choice of two piece sets: the standard
   Lichess/cburnett set, or an original "Uzbek Lab" set (see below).
+- **Built mobile-first, not as an afterthought** — see the dedicated section
+  below.
 
 ## How the pieces fit together
 
@@ -125,6 +130,18 @@ rating, and the UI says so.
 **Maximum** difficulty turns strength-limiting off entirely and just gives the
 engine more time/depth — it is not artificially held back.
 
+### Two players, one device
+
+Picking "2 Players" under Player turns off the engine entirely — both sides
+are human, taking turns on the same screen. The board automatically flips to
+face whoever is about to move (checked on every move, undo, and redo, not just
+at the start), so you don't need to physically rotate the device; "Flip board"
+still works normally on top of that if your actual seating doesn't match.
+Clocks, captured pieces, undo/redo, and PGN export all work exactly the same
+as playing against the engine — the only thing that's off is Difficulty, which
+the setup screen hides for this mode since there's no engine for it to apply
+to.
+
 ### Game review
 
 Reviewing a game — reached from the game-over dialog's "Analyze game" button, or
@@ -169,6 +186,32 @@ design brief; the shape-generating code is in `scripts/build-uzbek-pieces.mjs`
 if you'd like to push the style further — run `node scripts/build-uzbek-pieces.mjs`
 after editing it (or the SVGs directly) to regenerate the actual piece files and
 stylesheet.
+
+### Mobile
+
+The layout, not just the board, is designed for a phone browser:
+
+- The setup and review panels stop being `position: sticky` once they're
+  stacked below the board (sticky made sense beside a fixed board; it just
+  yanks content around once the panel is a normal part of the scroll).
+- The primary action of a long panel (Start game / Back to setup) pins to the
+  bottom of the screen so it's reachable without hunting for it after
+  scrolling through settings.
+- Every control was re-checked against a thumb rather than a mouse pointer:
+  buttons, checkboxes, slider thumbs, and modal close buttons are all sized up
+  on touch-width screens, and text inputs are kept at 16px there specifically
+  — under that, iOS Safari zooms the whole page in when you focus a field.
+- Tap targets get `touch-action: manipulation` and no tap-highlight flash, and
+  the page can't accidentally pull-to-refresh mid-game.
+- Dragging a piece — from the board or from the palette — can't also scroll
+  the page out from under your finger. Chessground already handles this
+  correctly for the board itself (it registers its touch listener as
+  non-passive specifically to block scroll during a drag); the palette's own
+  drag-vs-tap detection in `PiecePalette.jsx` does the same for the brief
+  window before a drag is confirmed.
+- A short, wide viewport (a phone in landscape) caps the board's size to the
+  available height instead of letting a full-width board push the controls
+  off-screen.
 
 ### The position editor
 

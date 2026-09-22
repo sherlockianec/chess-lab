@@ -1,6 +1,7 @@
 const OPTIONS = [
-  { id: 'white', label: 'Play White' },
-  { id: 'black', label: 'Play Black' },
+  { id: 'white', label: 'White' },
+  { id: 'black', label: 'Black' },
+  { id: 'human', label: '2 Players' },
   { id: 'watch', label: 'Watch' },
 ]
 
@@ -8,7 +9,7 @@ export default function PlayerPanel({ playerColor, onChange, engineMovesFirst, o
   return (
     <section className="panel-section" aria-label="Player">
       <h2 className="panel-heading">Player</h2>
-      <div className="segmented" role="radiogroup" aria-label="Choose your side">
+      <div className="segmented" role="radiogroup" aria-label="Choose game mode">
         {OPTIONS.map((opt) => (
           <button
             key={opt.id}
@@ -22,7 +23,12 @@ export default function PlayerPanel({ playerColor, onChange, engineMovesFirst, o
           </button>
         ))}
       </div>
-      {playerColor !== 'watch' && (
+      {playerColor === 'human' && (
+        <p className="hint-text">
+          Two people, one device — no engine involved. The board flips to face whoever's turn it is.
+        </p>
+      )}
+      {playerColor !== 'watch' && playerColor !== 'human' && (
         <label className="checkbox-label">
           <input
             type="checkbox"

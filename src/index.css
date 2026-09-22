@@ -62,10 +62,18 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Removes the gray/blue flash Android/iOS browsers show on tap by default;
+     our own :active / focus-visible states provide feedback instead. */
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
 }
 
 #root {
   min-height: 100vh;
+  /* Falls back to 100vh above for older browsers; dvh accounts for mobile
+     browser chrome (address bar) showing/hiding instead of leaving a gap or
+     forcing a scrollbar every time it does. */
+  min-height: 100dvh;
 }
 
 button,
@@ -74,6 +82,9 @@ select,
 textarea {
   font: inherit;
   color: inherit;
+  /* Removes the ~300ms tap delay some mobile browsers add while waiting to see
+     if a tap becomes a double-tap-to-zoom gesture. */
+  touch-action: manipulation;
 }
 
 button {
