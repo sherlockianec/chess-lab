@@ -1,11 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" viewBox="0 0 45 45">
-  <g fill="#f2e8d5" stroke="#241c10" stroke-width="1" stroke-linejoin="round">
-    <style>.piece-band{fill:#b5883f;stroke:none}.piece-line{stroke:#241c10;stroke-width:1.1}.piece-eye{fill:#241c10;stroke:none}</style>
-    <circle cx="22.5" cy="16.5" r="5.6" />
-  <path d="M 14.00 33
-    Q 14.00 25.17 18.90 19.5
-    L 26.10 19.5
-    Q 31.00 25.17 31.00 33 Z" />
-  <rect x="13.00" y="33" width="19.00" height="4" rx="1.6" /><rect x="11.50" y="37" width="22.00" height="2.6" rx="1.3" />
-  </g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="45" height="45"><defs><pattern id="adras" width="12" height="12" patternUnits="userSpaceOnUse">
+      <rect width="12" height="12" fill="#f7e3a6"/>
+      <path d="M0 0H3.6L5 1.5L3.6 3L5 4.5L3.6 6L5 7.5L3.6 9L5 10.5L3.6 12H0Z" fill="#c9302c"/>
+      <path d="M0 0H1.6L2.5 1.5L1.6 3L2.5 4.5L1.6 6L2.5 7.5L1.6 9L2.5 10.5L1.6 12H0Z" fill="#8f1d1d"/>
+      <rect x="6.3" width="1.3" height="12" fill="#ee8a1c"/>
+      <path d="M9.6 3C12.3 4.8 11.8 8.2 9.6 9C7.3999999999999995 8.2 6.8999999999999995 4.8 9.6 3Z" fill="#1f7f62"/>
+      <circle cx="9.6" cy="6" r="0.85" fill="#f7e3a6"/></pattern></defs><path d="M22.5 9c-2.21 0-4 1.79-4 4 0 .89.29 1.71.78 2.38C17.33 16.5 16 18.59 16 21c0 2.03.94 3.84 2.41 5.03-3 1.06-7.41 5.55-7.41 13.47h23c0-7.92-4.41-12.41-7.41-13.47 1.47-1.19 2.41-3 2.41-5.03 0-2.41-1.33-4.5-3.28-5.62.49-.67.78-1.49.78-2.38 0-2.21-1.79-4-4-4z" fill="url(#adras)" stroke="#000" stroke-width="1.5" stroke-linecap="round"/></svg>

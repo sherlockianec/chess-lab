@@ -59,15 +59,16 @@ No manual `gh-pages` branch or `npm run deploy` step needed — every push to
   sides; six named difficulty tiers plus a fully manual Custom mode; adjustable
   thinking time; standard or custom clocks, or no clock at all.
 - **Two players, one device** — a local pass-and-play mode with no engine
-  involved at all; the board automatically reorients to face whoever's turn it
-  is.
+  involved at all. The board stays put; the pieces turn 180° to face whoever
+  is about to move.
 - **Game review** — after a game ends (or by pasting in any PGN), step through
   every move with a live evaluation graph, click any point on the graph or any
   move in the list to jump there.
 - **PGN import/export** — copy a finished (or in-progress) game as PGN to share
   it elsewhere, or paste one in to review it.
-- **Light and dark themes**, plus a choice of two piece sets: the standard
-  Lichess/cburnett set, or an original "Uzbek Lab" set (see below).
+- **Light and dark themes**, plus a choice of three piece sets: the standard
+  Lichess/cburnett set, "New Figures" (an original redrawn set), or "Uzbek
+  Lab" (classic shapes woven from adras/atlas silk patterns) — see below.
 - **Built mobile-first, not as an afterthought** — see the dedicated section
   below.
 
@@ -90,14 +91,15 @@ src/
                           game-over modal, game review panel, PGN import, ...)
   App.jsx                 Wires the above together: owns the setup/playing/review
                           phases, and decides when it's the engine's turn to move.
-  assets/uzbek-pieces/    Source SVGs for the "Uzbek Lab" piece set.
+  assets/newfigures-pieces/  Source SVGs for the "New Figures" piece set.
+  assets/uzbek-pieces/    Source SVGs for the "Uzbek Lab" (adras/atlas) piece set.
   styles/                 Chessground's structural CSS, both piece-set stylesheets,
                           and the custom board theme.
 scripts/
-  build-uzbek-pieces.mjs  Regenerates the Uzbek piece SVGs + their CSS. Edit the
-                          shape functions in this script (or hand-edit the SVGs
-                          in src/assets/uzbek-pieces/ directly), then run
-                          `node scripts/build-uzbek-pieces.mjs`.
+  build-newfigures-pieces.mjs  Regenerates the New Figures SVGs + CSS.
+  build-uzbek-pieces.mjs  Regenerates the Uzbek Lab SVGs + CSS from the classic
+                          shapes. Edit the fabric patterns in the script, then
+                          run `node scripts/build-uzbek-pieces.mjs`.
 public/engine/            The Stockfish WASM binary - see the README.md in that
                           folder for exactly which build this is and how to swap it.
 ```
@@ -133,10 +135,12 @@ engine more time/depth — it is not artificially held back.
 ### Two players, one device
 
 Picking "2 Players" under Player turns off the engine entirely — both sides
-are human, taking turns on the same screen. The board automatically flips to
-face whoever is about to move (checked on every move, undo, and redo, not just
-at the start), so you don't need to physically rotate the device; "Flip board"
-still works normally on top of that if your actual seating doesn't match.
+are human, taking turns on the same screen. The intended setup is the device
+lying flat between two people, so the board never turns: White stays at the
+bottom, Black at the top. Instead, every piece makes a half-turn in place —
+upright for White on White's move, rotated 180° on Black's move so Black sees
+them the right way up (this follows every move, undo, and redo; the promotion
+picker turns too). "Flip board" is still there if you want it.
 Clocks, captured pieces, undo/redo, and PGN export all work exactly the same
 as playing against the engine — the only thing that's off is Difficulty, which
 the setup screen hides for this mode since there's no engine for it to apply
@@ -173,19 +177,21 @@ side's own signed point differential using the standard 1/3/3/5/9 point values
 position's piece counts to a full starting army, so it works identically for
 live play, review, and any pasted PGN.
 
-### The "Uzbek Lab" piece set
+### Piece sets
 
-An original, minimalist piece set (not a reskin of an existing one) drawing on
-Central Asian / Timurid visual motifs rather than the usual Staunton silhouette:
-a domed king with a cross-and-star finial, a sharply-pointed crown for the
-queen, a crenellated fortress tower for the rook, a horse-head knight, a bishop
-with the classic mitre slit plus small tusk-curls — a nod to the historical
-elephant (*alfil*) that occupied this square in the Persian/Central Asian chess
-tradition — and a simple domed pawn. It's a first pass at a hard, subjective
-design brief; the shape-generating code is in `scripts/build-uzbek-pieces.mjs`
-if you'd like to push the style further — run `node scripts/build-uzbek-pieces.mjs`
-after editing it (or the SVGs directly) to regenerate the actual piece files and
-stylesheet.
+- **Classic** — the standard Lichess/cburnett pieces.
+- **New Figures** — an original, minimalist redraw (domed king with a star
+  finial, pointed-crown queen, crenellated tower rook, horse-head knight, a
+  bishop with tusk-curls nodding to the historical *alfil*). Generated by
+  `scripts/build-newfigures-pieces.mjs`.
+- **Uzbek Lab** — the same familiar piece shapes as Classic, but each side is
+  "woven" from a traditional Uzbek silk pattern: White in warm *adras*
+  (red, orange, gold and cream stripes with feathered *abrabandi* edges and
+  green *bodom* almond motifs), Black in cool *atlas* (indigo, emerald and
+  turquoise stripes with rose bodom and diamond accents). Warm-light versus
+  cool-dark keeps the two sides easy to tell apart. Generated by
+  `scripts/build-uzbek-pieces.mjs` — tweak the pattern tile there to change the
+  fabric.
 
 ### Mobile
 

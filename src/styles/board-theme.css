@@ -83,3 +83,42 @@ coords.squares:nth-of-type(even) :nth-child(even) {
   color: var(--board-light);
   opacity: 0.9;
 }
+
+/* ---- Two-player (pass-and-play) piece turning ---------------------------------
+ * The device lies flat between two players. The board never turns (White stays
+ * near White, Black near Black); instead every piece makes a half-turn in place
+ * so it faces whoever is about to move.
+ *
+ * Chessground positions each <piece> with an inline `transform: translate()`, so
+ * rotating the element itself would fling it off its square. Instead, while
+ * `.pieces-turnable` is on, the piece's own background is parked off-screen and
+ * re-drawn by a ::before layer, which is free to rotate. `background-image:
+ * inherit` reuses whichever piece set is active.
+ *   .pieces-turnable      -> 2-player game in progress (pieces drawn via ::before)
+ *   .pieces-facing-black  -> Black to move (pieces rotated 180deg)
+ */
+.pieces-turnable .cg-wrap piece {
+  background-position: -9999px -9999px;
+  background-repeat: no-repeat;
+}
+.pieces-turnable .cg-wrap piece::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: inherit;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: transform 0.4s ease;
+}
+.pieces-facing-black .cg-wrap piece::before {
+  transform: rotate(180deg);
+}
+@media (prefers-reduced-motion: reduce) {
+  .pieces-turnable .cg-wrap piece::before {
+    transition: none;
+  }
+}
+.promotion-panel--facing-black {
+  transform: rotate(180deg);
+}

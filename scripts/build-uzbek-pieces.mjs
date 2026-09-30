@@ -1,190 +1,127 @@
+/**
+ * "Uzbek Lab" piece set for Chess Lab.
+ *
+ * These are the ordinary, familiar chess piece silhouettes (copied from the
+ * classic set) -- only the *fill* changes. Instead of flat white / flat black,
+ * each side is "woven" from a traditional Uzbek silk fabric pattern:
+ *
+ *   White side -> warm ADRAS: red, orange, gold and cream vertical stripes with
+ *                 the feathered ("abrabandi", cloud-binding) serrated edges that
+ *                 are the hallmark of Margilan ikat, plus small bodom (almond /
+ *                 paisley) motifs.
+ *   Black side -> cool ATLAS: indigo, emerald and turquoise stripes with the same
+ *                 serrated edges, plus rose-pink bodom motifs and small tumor
+ *                 (amulet-diamond) accents.
+ *
+ * The two sides differ in hue AND lightness (warm-light vs cool-dark), so they
+ * stay easy to tell apart on both light and dark squares.
+ *
+ * Run: node scripts/build-uzbek-pieces.mjs
+ * Outputs: src/assets/uzbek-pieces/*.svg, src/styles/chessground-pieces-uzbek.css,
+ *          scripts/uzbek-pieces-contact-sheet.svg
+ */
 import fs from 'node:fs'
 
-const W = 45, H = 45
-const CX = 22.5
-
-function star(cx, cy, outerR, innerR, points, rotationDeg = 0) {
-  const pts = []
-  const n = points * 2
-  for (let i = 0; i < n; i++) {
-    const angleDeg = rotationDeg + (i * 360) / n - 90
-    const r = i % 2 === 0 ? outerR : innerR
-    const rad = (angleDeg * Math.PI) / 180
-    pts.push(`${(cx + r * Math.cos(rad)).toFixed(2)},${(cy + r * Math.sin(rad)).toFixed(2)}`)
-  }
-  return `M ${pts.join(' L ')} Z`
-}
-
-// Smooth, continuous robe/torso silhouette -- flares out gently from a narrow
-// top to a wide base. Used (with different sizes) for pawn/king/queen/bishop so
-// the family reads as one set.
-function robeBody(topY, baseY, topHalfWidth, baseHalfWidth) {
-  const ctrlY = topY + (baseY - topY) * 0.42
-  return `M ${(CX - baseHalfWidth).toFixed(2)} ${baseY}
-    Q ${(CX - baseHalfWidth).toFixed(2)} ${ctrlY.toFixed(2)} ${(CX - topHalfWidth).toFixed(2)} ${topY}
-    L ${(CX + topHalfWidth).toFixed(2)} ${topY}
-    Q ${(CX + baseHalfWidth).toFixed(2)} ${ctrlY.toFixed(2)} ${(CX + baseHalfWidth).toFixed(2)} ${baseY} Z`
-}
-
-function baseElement(y, halfWidth) {
-  return `<rect x="${(CX - halfWidth).toFixed(2)}" y="${y}" width="${(halfWidth * 2).toFixed(2)}" height="4" rx="1.6" />` +
-    `<rect x="${(CX - halfWidth - 1.5).toFixed(2)}" y="${y + 4}" width="${(halfWidth * 2 + 3).toFixed(2)}" height="2.6" rx="1.3" />`
-}
-
-const pieces = {}
-
-// --- PAWN: round head overlapping the body directly (no gap), simple + clean. ---
-pieces.pawn = () => `
-  <circle cx="${CX}" cy="16.5" r="5.6" />
-  <path d="${robeBody(19.5, 33, 3.6, 8.5)}" />
-  ${baseElement(33, 9.5)}
-`.trim()
-
-// --- KING: round head+crown band, a tall cross-topped spire, sash band on the robe. ---
-pieces.king = () => `
-  <path d="${robeBody(19, 34, 6.3, 12)}" />
-  ${baseElement(34, 13)}
-  <rect x="${(CX - 8.5).toFixed(2)}" y="25.5" width="17" height="2.4" rx="1.2" class="piece-band" />
-  <circle cx="${CX}" cy="17.5" r="6.6" />
-  <rect x="${(CX - 8).toFixed(2)}" y="21.5" width="16" height="2.6" rx="1" />
-  <rect x="${(CX - 1.1).toFixed(2)}" y="7" width="2.2" height="8" rx="0.6" />
-  <rect x="${(CX - 3.4).toFixed(2)}" y="9.6" width="6.8" height="2.2" rx="0.6" />
-`.trim()
-
-// --- QUEEN: taller/narrower body, a sharply-pointed crown (distinct from the
-// king's dome and the rook's flat crenellations), star finials on each point. ---
-pieces.queen = () => {
-  const points = [-8, -4, 0, 4, 8]
-  const spikes = points.map((dx) => {
-    const topY = dx === 0 ? 9 : 12
-    return `L ${(CX + dx - 2).toFixed(2)} 19 L ${(CX + dx).toFixed(2)} ${topY} L ${(CX + dx + 2).toFixed(2)} 19`
-  }).join(' ')
-  const crown = `M ${(CX - 10).toFixed(2)} 22 L ${(CX - 10).toFixed(2)} 19 ${spikes} L ${(CX + 10).toFixed(2)} 19 L ${(CX + 10).toFixed(2)} 22 Z`
-  const finials = points.map((dx) => star(CX + dx, dx === 0 ? 7.3 : 10.3, 1.5, 0.6, 4)).map((d) => `<path d="${d}" />`).join('')
-  return `
-  <path d="${robeBody(21, 34, 5.6, 11)}" />
-  ${baseElement(34, 12)}
-  <path d="${crown}" />
-  ${finials}
-  `.trim()
-}
-
-// --- ROOK: tapered fortress tower, bold crenellations. -----------------------
-pieces.rook = () => {
-  const merlons = [0, 1, 2, 3].map((i) => {
-    const x = CX - 9 + i * (18 / 4) + 0.8
-    return `<rect x="${x.toFixed(2)}" y="8.5" width="3" height="5" />`
-  }).join('')
-  return `
-  <path d="M ${(CX - 9.5).toFixed(2)} 34 L ${(CX - 8).toFixed(2)} 15 L ${(CX + 8).toFixed(2)} 15 L ${(CX + 9.5).toFixed(2)} 34 Z" />
-  ${baseElement(34, 10.5)}
-  <rect x="${(CX - 9.2).toFixed(2)}" y="13" width="18.4" height="4.5" rx="0.6" />
-  ${merlons}
-  <rect x="${(CX - 6).toFixed(2)}" y="23" width="12" height="2.2" rx="1.1" class="piece-band" />
-  `.trim()
-}
-
-// --- BISHOP: classic round head + a bold mitre slit (the universal bishop cue),
-// plus small tusk-curls for the historical elephant (alfil) reference. No star
-// finial here -- that's the king/queen's motif, and this needs its own silhouette. ---
-pieces.bishop = () => `
-  <path d="${robeBody(21, 34, 4.4, 9)}" />
-  ${baseElement(34, 10)}
-  <circle cx="${CX}" cy="17.5" r="6.2" />
-  <circle cx="${CX}" cy="8.6" r="1.7" />
-  <rect x="${(CX - 7.5).toFixed(2)}" y="24.5" width="15" height="2.4" rx="1.2" class="piece-band" />
-  <path d="M ${(CX - 5.8).toFixed(2)} 19 C ${(CX - 8.6).toFixed(2)} 19.9 ${(CX - 8.6).toFixed(2)} 22.8 ${(CX - 6).toFixed(2)} 23.4" fill="none" class="piece-line" stroke-linecap="round" stroke-width="1.3" />
-  <path d="M ${(CX + 5.8).toFixed(2)} 19 C ${(CX + 8.6).toFixed(2)} 19.9 ${(CX + 8.6).toFixed(2)} 22.8 ${(CX + 6).toFixed(2)} 23.4" fill="none" class="piece-line" stroke-linecap="round" stroke-width="1.3" />
-  <path d="M ${(CX - 4.4).toFixed(2)} 12.2 L ${(CX + 3.6).toFixed(2)} 19.4" fill="none" class="piece-line" stroke-linecap="round" stroke-width="1.8" />
-`.trim()
-
-// --- KNIGHT: iconic chess-knight silhouette -- one smooth arched neck curve,
-// one smooth face curve, and a long straight-ish snout in between. Built from a
-// few large curves rather than many short segments to keep the outline clean.
-pieces.knight = () => `
-  ${baseElement(34, 10.5)}
-  <path d="M 13 34
-           C 11.8 26 12.6 20.5 15.5 15.5
-           C 17.3 12.3 19.6 9.8 22.7 8.3
-           C 21.9 9.6 21.8 10.7 22.6 11.5
-           C 26.5 11.1 30.5 13 33.4 17.4
-           C 34.1 18.5 33.7 19.6 32.4 19.6
-           C 31.6 18.3 30.2 17.6 28.8 18
-           L 29.6 20.3 L 26.6 19.6
-           C 25.4 21 25.6 22.7 27 24
-           C 23.6 24.6 21.4 26.7 20.8 29.6
-           C 20.5 31.1 20.8 32.6 21.6 34
-           Z" />
-  <circle cx="25.4" cy="12.6" r="0.9" class="piece-eye" />
-`.trim()
-
-const roleOrder = ['king', 'queen', 'rook', 'bishop', 'knight', 'pawn']
-const colors = {
-  white: { fill: '#f2e8d5', stroke: '#241c10', line: '#241c10', band: '#b5883f', eye: '#241c10' },
-  black: { fill: '#1c150c', stroke: '#f2e8d5', line: '#f2e8d5', band: '#c9a668', eye: '#f2e8d5' },
-}
-
-function wrapSvg(inner, color) {
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
-  <g fill="${color.fill}" stroke="${color.stroke}" stroke-width="1" stroke-linejoin="round">
-    <style>.piece-band{fill:${color.band};stroke:none}.piece-line{stroke:${color.line};stroke-width:1.1}.piece-eye{fill:${color.eye};stroke:none}</style>
-    ${inner}
-  </g>
-</svg>`
-}
-
+const ROLES = ['king', 'queen', 'rook', 'bishop', 'knight', 'pawn']
+const srcDir = new URL('../src/assets/classic-pieces/', import.meta.url)
 const outDir = new URL('../src/assets/uzbek-pieces/', import.meta.url)
+
+// Tile is 12 x 12 user units (the piece canvas is 45 x 45), so the weave reads at board size.
+const bodom = (cx, cy, s = 1) =>
+  `M${cx} ${cy - 3 * s}C${cx + 2.7 * s} ${cy - 1.2 * s} ${cx + 2.2 * s} ${cy + 2.2 * s} ${cx} ${cy + 3 * s}` +
+  `C${cx - 2.2 * s} ${cy + 2.2 * s} ${cx - 2.7 * s} ${cy - 1.2 * s} ${cx} ${cy - 3 * s}Z`
+
+// Feathered stripe: solid band on the left, serrated on the right (abrabandi).
+const featherStripe = (x0, x1, teeth = 4, amp = 1.4) => {
+  const h = 12 / teeth
+  let d = `M${x0} 0H${x1}`
+  for (let i = 0; i < teeth; i++) {
+    d += `L${x1 + amp} ${i * h + h / 2}L${x1} ${(i + 1) * h}`
+  }
+  return d + `H${x0}Z`
+}
+
+const FABRICS = {
+  // Warm adras -- for the white pieces
+  white: {
+    tile: `
+      <rect width="12" height="12" fill="#f7e3a6"/>
+      <path d="${featherStripe(0, 3.6)}" fill="#c9302c"/>
+      <path d="${featherStripe(0, 1.6, 4, 0.9)}" fill="#8f1d1d"/>
+      <rect x="6.3" width="1.3" height="12" fill="#ee8a1c"/>
+      <path d="${bodom(9.6, 6)}" fill="#1f7f62"/>
+      <circle cx="9.6" cy="6" r="0.85" fill="#f7e3a6"/>`,
+    outline: '#000',
+  },
+  // Cool atlas -- for the black pieces
+  black: {
+    tile: `
+      <rect width="12" height="12" fill="#1c2b73"/>
+      <path d="${featherStripe(0, 3.6)}" fill="#0e9a78"/>
+      <path d="${featherStripe(0, 1.6, 4, 0.9)}" fill="#0a5e50"/>
+      <rect x="6.3" width="1.3" height="12" fill="#3fc1d1"/>
+      <path d="${bodom(9.6, 6)}" fill="#e2578f"/>
+      <path d="M9.6 4.9L10.7 6L9.6 7.1L8.5 6Z" fill="#1c2b73"/>`,
+    outline: '#000',
+  },
+}
+
+function defsFor(colorName) {
+  return `<defs><pattern id="${colorName === 'white' ? 'adras' : 'atlas'}" width="12" height="12" patternUnits="userSpaceOnUse">${FABRICS[colorName].tile}</pattern></defs>`
+}
+
+function weave(colorName, role, svg) {
+  const ref = `url(#${colorName === 'white' ? 'adras' : 'atlas'})`
+  let out = svg
+  if (colorName === 'white') {
+    out = out.replaceAll('fill="#fff"', `fill="${ref}"`)
+  } else {
+    out = out.replaceAll('fill="#000"', `fill="${ref}"`)
+    // These black classic pieces rely on SVG's default black fill -- give them the fabric explicitly.
+    if (role === 'rook' || role === 'queen') out = out.replace('<g fill-rule', `<g fill="${ref}" fill-rule`)
+    if (role === 'pawn') out = out.replace('<path d=', `<path fill="${ref}" d=`)
+  }
+  return out.replace(/(<svg[^>]*>)/, `$1${defsFor(colorName)}`)
+}
+
 fs.mkdirSync(outDir, { recursive: true })
-for (const role of roleOrder) {
-  for (const colorName of ['white', 'black']) {
-    const svg = wrapSvg(pieces[role](), colors[colorName])
+const results = {}
+for (const colorName of ['white', 'black']) {
+  for (const role of ROLES) {
+    const src = fs.readFileSync(new URL(`${colorName}-${role}.svg`, srcDir), 'utf8')
+    const svg = weave(colorName, role, src)
+    if (!svg.includes('url(#a')) throw new Error(`fabric not applied to ${colorName}-${role}`)
     fs.writeFileSync(new URL(`${colorName}-${role}.svg`, outDir), svg)
+    results[`${colorName}-${role}`] = svg
   }
 }
 
-// Contact sheet: all 12, alternating light/dark backdrop squares like a real board.
-let cells = ''
-let i = 0
-for (const role of roleOrder) {
-  for (const colorName of ['white', 'black']) {
-    const col = i % 6
-    const row = Math.floor(i / 6)
-    const x = col * 50
-    const y = row * 50
-    const bg = (col + row) % 2 === 0 ? '#ead9b8' : '#7c5a3c'
-    const svg = wrapSvg(pieces[role](), colors[colorName])
-    const inner = svg.replace(/<svg[^>]*>/, '').replace('</svg>', '')
-    cells += `<g transform="translate(${x},${y})"><rect width="50" height="50" fill="${bg}"/><g transform="translate(2.5,2.5)">${inner}</g></g>`
-    i++
-  }
-}
-const sheet = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 100">${cells}</svg>`
-fs.writeFileSync(new URL('../scripts/uzbek-pieces-contact-sheet.svg', import.meta.url), sheet)
-
-// Build the actual chessground-compatible stylesheet (base64-embedded SVGs,
-// one rule per role/color, matching the same selector shape Chessground's own
-// bundled themes use).
 let css = `/**
- * "Uzbek Lab" piece set for Chess Lab -- an original, minimalist piece set
- * drawing on Central Asian / Timurid visual motifs (onion domes, muqarnas-style
- * crenellation, scalloped iwan-arch crowns, star finials) rather than the usual
- * European Staunton silhouette, plus a nod to the historical Persian/Central
- * Asian chess tradition, where this game's "bishop" square was originally an
- * elephant (alfil) -- hence the tusk-curls on that piece.
- *
- * Generated by scripts/build-uzbek-pieces.mjs from src/assets/uzbek-pieces/*.svg.
- * Tweak the shapes in that script (or hand-edit the SVGs directly) and re-run
- * \`node scripts/build-uzbek-pieces.mjs\` to regenerate this file.
+ * "Uzbek Lab" pieces: classic silhouettes woven from adras (white side) and
+ * atlas (black side) silk patterns.
+ * Generated by scripts/build-uzbek-pieces.mjs -- edit the script, not this file.
  */
-
 `
-for (const role of roleOrder) {
-  for (const colorName of ['white', 'black']) {
-    const svg = wrapSvg(pieces[role](), colors[colorName])
-    const b64 = Buffer.from(svg).toString('base64')
+for (const colorName of ['white', 'black']) {
+  for (const role of ROLES) {
+    const b64 = Buffer.from(results[`${colorName}-${role}`]).toString('base64')
     css += `.piece-set-uzbek .cg-wrap piece.${role}.${colorName} {\n  background-image: url('data:image/svg+xml;base64,${b64}');\n}\n`
   }
 }
 fs.writeFileSync(new URL('../src/styles/chessground-pieces-uzbek.css', import.meta.url), css)
 
-console.log('done')
+// Contact sheet: every piece on a light and a dark square, for eyeballing.
+let sheet = `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="720" viewBox="0 0 1080 720">`
+;[['white', 0], ['black', 360]].forEach(([colorName, oy]) => {
+  ROLES.forEach((role, i) => {
+    ;[['#ead9b8', 0], ['#7c5a3c', 180]].forEach(([sq, ox]) => {
+      const inner = results[`${colorName}-${role}`].replace(/<svg[^>]*>/, '').replace('</svg>', '')
+      const x = i * 180 + (ox === 0 ? 0 : 0)
+      sheet += `<rect x="${x}" y="${oy + (ox === 0 ? 0 : 180)}" width="180" height="180" fill="${sq}"/>`
+      sheet += `<g transform="translate(${x},${oy + (ox === 0 ? 0 : 180)}) scale(4)">${inner}</g>`
+    })
+  })
+})
+sheet += '</svg>'
+fs.writeFileSync(new URL('./uzbek-pieces-contact-sheet.svg', import.meta.url), sheet)
+console.log('Uzbek Lab pieces written.')

@@ -46,7 +46,7 @@ const DEFAULT_SETTINGS = {
   showEval: true,
   showHistory: true,
   theme: 'dark', // 'dark' | 'light'
-  pieceSet: 'classic', // 'classic' | 'uzbek'
+  pieceSet: 'classic', // 'classic' | 'newfigures' | 'uzbek'
 }
 
 function describeResult(result) {
@@ -138,15 +138,13 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [result.over])
 
-  // Pass-and-play: reorient the board to face whoever is about to move, so
-  // each player sees it their way up without needing to physically rotate the
-  // device. The Flip board button still works normally on top of this if
-  // someone's actual seating doesn't match.
-  useEffect(() => {
-    if (phase !== 'playing' || settings.playerColor !== 'human' || result.over) return
-    const facing = toFullColor(game.turn)
-    setSettings((s) => (s.orientation === facing ? s : { ...s, orientation: facing }))
-  }, [phase, settings.playerColor, game.turn, result.over, setSettings])
+  // Pass-and-play (2 Players): the device lies flat between two people, so the
+  // board itself never turns. Instead, all pieces rotate 180 degrees in place
+  // whenever it is Black's turn, so Black -- sitting on the far side -- sees
+  // them upright, and back again for White. See `.pieces-facing-black` in
+  // board-theme.css.
+  const piecesTurnable = phase === 'playing' && settings.playerColor === 'human' && !result.over
+  const piecesFacingBlack = piecesTurnable && game.turn === 'b'
 
   const applyMove = useCallback(
     (move, moverLetter) => {
@@ -315,8 +313,8 @@ export default function App() {
     engine.newGame()
     setSettings((s) => ({
       ...s,
-      orientation:
-        s.playerColor === 'human' ? toFullColor(validation.fen.split(' ')[1]) : s.playerColor === 'black' ? 'black' : 'white',
+      // 2 Players keeps White at the bottom: the board never turns, only the pieces do.
+      orientation: s.playerColor === 'black' ? 'black' : 'white',
     }))
     setPhase('playing')
     setGameSessionId((n) => n + 1)
@@ -491,7 +489,7 @@ export default function App() {
 
           <div className="board-area">
             <EvalBar evaluation={evalBarValue} visible={(phase === 'playing' && settings.showEval) || phase === 'review'} />
-            <div className="board-frame">
+            <div className={`board-frame${piecesTurnable ? ' pieces-turnable' : ''}${piecesFacingBlack ? ' pieces-facing-black' : ''}`}>
               <Board
                 ref={boardRef}
                 fen={boardFen}
@@ -520,6 +518,7 @@ export default function App() {
                 <PromotionPicker
                   color={pendingPromotion.color}
                   pieceSet={settings.pieceSet}
+                  facingBlack={piecesFacingBlack}
                   onPick={handlePromotionPick}
                   onCancel={handlePromotionCancel}
                 />
@@ -619,6 +618,15 @@ export default function App() {
                     <button
                       type="button"
                       role="radio"
+                      aria-checked={settings.pieceSet === 'newfigures'}
+                      className={`segmented__option${settings.pieceSet === 'newfigures' ? ' is-selected' : ''}`}
+                      onClick={() => setSettings((s) => ({ ...s, pieceSet: 'newfigures' }))}
+                    >
+                      New Figures
+                    </button>
+                    <button
+                      type="button"
+                      role="radio"
                       aria-checked={settings.pieceSet === 'uzbek'}
                       className={`segmented__option${settings.pieceSet === 'uzbek' ? ' is-selected' : ''}`}
                       onClick={() => setSettings((s) => ({ ...s, pieceSet: 'uzbek' }))}
@@ -626,7 +634,11 @@ export default function App() {
                       Uzbek Lab
                     </button>
                   </div>
-                  <p className="hint-text hint-text--muted">Central Asian-inspired minimalist set — domed king, star finials, a fortress-tower rook.</p>
+                  <p className="hint-text hint-text--muted">{{
+                      classic: 'The familiar black-and-white pieces.',
+                      newfigures: 'A redrawn minimalist set with domed king, star finials and a fortress-tower rook.',
+                      uzbek: 'Classic shapes woven from Uzbek adras (White) and atlas (Black) silk patterns.',
+                    }[settings.pieceSet] ?? ''}</p>
                 </fieldset>
               </section>
               <button type="button" className="btn btn--primary btn--large" onClick={handleStartGame}>

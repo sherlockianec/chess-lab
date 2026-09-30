@@ -7,6 +7,7 @@
 // black pieces hard to tell apart or even look swapped. Real artwork with an
 // explicit fill color has no such ambiguity.
 const classicModules = import.meta.glob('../assets/classic-pieces/*.svg', { eager: true, import: 'default' })
+const newFiguresModules = import.meta.glob('../assets/newfigures-pieces/*.svg', { eager: true, import: 'default' })
 const uzbekModules = import.meta.glob('../assets/uzbek-pieces/*.svg', { eager: true, import: 'default' })
 
 function byFileName(modules) {
@@ -19,6 +20,7 @@ function byFileName(modules) {
 
 const SETS = {
   classic: byFileName(classicModules),
+  newfigures: byFileName(newFiguresModules),
   uzbek: byFileName(uzbekModules),
 }
 

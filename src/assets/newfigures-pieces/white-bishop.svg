@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" viewBox="0 0 45 45">
+  <g fill="#f2e8d5" stroke="#241c10" stroke-width="1" stroke-linejoin="round">
+    <style>.piece-band{fill:#b5883f;stroke:none}.piece-line{stroke:#241c10;stroke-width:1.1}.piece-eye{fill:#241c10;stroke:none}</style>
+    <path d="M 13.50 34
+    Q 13.50 26.46 18.10 21
+    L 26.90 21
+    Q 31.50 26.46 31.50 34 Z" />
+  <rect x="12.50" y="34" width="20.00" height="4" rx="1.6" /><rect x="11.00" y="38" width="23.00" height="2.6" rx="1.3" />
+  <circle cx="22.5" cy="17.5" r="6.2" />
+  <circle cx="22.5" cy="8.6" r="1.7" />
+  <rect x="15.00" y="24.5" width="15" height="2.4" rx="1.2" class="piece-band" />
+  <path d="M 16.70 19 C 13.90 19.9 13.90 22.8 16.50 23.4" fill="none" class="piece-line" stroke-linecap="round" stroke-width="1.3" />
+  <path d="M 28.30 19 C 31.10 19.9 31.10 22.8 28.50 23.4" fill="none" class="piece-line" stroke-linecap="round" stroke-width="1.3" />
+  <path d="M 18.10 12.2 L 26.10 19.4" fill="none" class="piece-line" stroke-linecap="round" stroke-width="1.8" />
+  </g>
+</svg>

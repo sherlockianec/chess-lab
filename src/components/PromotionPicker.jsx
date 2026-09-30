@@ -8,11 +8,11 @@ const CHOICES = [
 ]
 
 /** Small modal asking which piece a pawn should promote to. `color` is 'w' | 'b'. */
-export default function PromotionPicker({ color, pieceSet, onPick, onCancel }) {
+export default function PromotionPicker({ color, pieceSet, facingBlack = false, onPick, onCancel }) {
   const fullColor = color === 'w' ? 'white' : 'black'
   return (
     <div className="promotion-overlay" role="dialog" aria-modal="true" aria-label="Choose promotion piece" onClick={onCancel}>
-      <div className="promotion-panel" onClick={(event) => event.stopPropagation()}>
+      <div className={`promotion-panel${facingBlack ? ' promotion-panel--facing-black' : ''}`} onClick={(event) => event.stopPropagation()}>
         {CHOICES.map(({ role, label }) => (
           <button
             key={role}

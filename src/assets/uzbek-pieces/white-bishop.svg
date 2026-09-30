@@ -1,16 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" viewBox="0 0 45 45">
-  <g fill="#f2e8d5" stroke="#241c10" stroke-width="1" stroke-linejoin="round">
-    <style>.piece-band{fill:#b5883f;stroke:none}.piece-line{stroke:#241c10;stroke-width:1.1}.piece-eye{fill:#241c10;stroke:none}</style>
-    <path d="M 13.50 34
-    Q 13.50 26.46 18.10 21
-    L 26.90 21
-    Q 31.50 26.46 31.50 34 Z" />
-  <rect x="12.50" y="34" width="20.00" height="4" rx="1.6" /><rect x="11.00" y="38" width="23.00" height="2.6" rx="1.3" />
-  <circle cx="22.5" cy="17.5" r="6.2" />
-  <circle cx="22.5" cy="8.6" r="1.7" />
-  <rect x="15.00" y="24.5" width="15" height="2.4" rx="1.2" class="piece-band" />
-  <path d="M 16.70 19 C 13.90 19.9 13.90 22.8 16.50 23.4" fill="none" class="piece-line" stroke-linecap="round" stroke-width="1.3" />
-  <path d="M 28.30 19 C 31.10 19.9 31.10 22.8 28.50 23.4" fill="none" class="piece-line" stroke-linecap="round" stroke-width="1.3" />
-  <path d="M 18.10 12.2 L 26.10 19.4" fill="none" class="piece-line" stroke-linecap="round" stroke-width="1.8" />
-  </g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="45" height="45"><defs><pattern id="adras" width="12" height="12" patternUnits="userSpaceOnUse">
+      <rect width="12" height="12" fill="#f7e3a6"/>
+      <path d="M0 0H3.6L5 1.5L3.6 3L5 4.5L3.6 6L5 7.5L3.6 9L5 10.5L3.6 12H0Z" fill="#c9302c"/>
+      <path d="M0 0H1.6L2.5 1.5L1.6 3L2.5 4.5L1.6 6L2.5 7.5L1.6 9L2.5 10.5L1.6 12H0Z" fill="#8f1d1d"/>
+      <rect x="6.3" width="1.3" height="12" fill="#ee8a1c"/>
+      <path d="M9.6 3C12.3 4.8 11.8 8.2 9.6 9C7.3999999999999995 8.2 6.8999999999999995 4.8 9.6 3Z" fill="#1f7f62"/>
+      <circle cx="9.6" cy="6" r="0.85" fill="#f7e3a6"/></pattern></defs><g fill="none" fill-rule="evenodd" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><g fill="url(#adras)" stroke-linecap="butt"><path d="M9 36c3.39-.97 10.11.43 13.5-2 3.39 2.43 10.11 1.03 13.5 2 0 0 1.65.54 3 2-.68.97-1.65.99-3 .5-3.39-.97-10.11.46-13.5-1-3.39 1.46-10.11.03-13.5 1-1.354.49-2.323.47-3-.5 1.354-1.94 3-2 3-2z"/><path d="M15 32c2.5 2.5 12.5 2.5 15 0 .5-1.5 0-2 0-2 0-2.5-2.5-4-2.5-4 5.5-1.5 6-11.5-5-15.5-11 4-10.5 14-5 15.5 0 0-2.5 1.5-2.5 4 0 0-.5.5 0 2z"/><path d="M25 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 1 1 5 0z"/></g><path d="M17.5 26h10M15 30h15m-7.5-14.5v5M20 18h5" stroke-linejoin="miter"/></g></svg>
