@@ -37,6 +37,24 @@ export default function ReviewPanel({
     else if (e.bottom > l.bottom) list.scrollTop += e.bottom - l.bottom
   }, [index])
 
+  // Keyboard stepping: Left/Right = previous/next move, Home/End = first/last position.
+  // Ignored while typing in a field, and when a modifier key is held (browser shortcuts).
+  useEffect(() => {
+    const onKeyDown = (e) => {
+      if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return
+      const t = e.target
+      if (t instanceof HTMLElement && (t.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(t.tagName))) return
+      if (e.key === 'ArrowLeft') onPrev()
+      else if (e.key === 'ArrowRight') onNext()
+      else if (e.key === 'Home') onGoTo(0)
+      else if (e.key === 'End') onGoTo(positions.length - 1)
+      else return
+      e.preventDefault() // stop the arrow keys from scrolling the page or moving a focused slider
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [onPrev, onNext, onGoTo, positions.length])
+
   const pairs = []
   for (let i = 0; i < sanList.length; i += 2) {
     pairs.push({
@@ -90,7 +108,7 @@ export default function ReviewPanel({
             <span className="hint-text hint-text--muted">Analyzing this move…</span>
           )}
         </div>
-        <div className="review-nav" role="group" aria-label="Step through moves">
+        <div className="review-nav" role="group" aria-label="Step through moves (or use the left and right arrow keys)">
           <button type="button" className="btn btn--ghost" onClick={onPrev} disabled={index === 0}>
             ◂ Prev
           </button>
@@ -98,6 +116,7 @@ export default function ReviewPanel({
             Next ▸
           </button>
         </div>
+        <p className="hint-text hint-text--muted review-keys-hint">Tip: use the ← → arrow keys to step through moves.</p>
       </section>
 
       {summaryRows.length > 0 && (

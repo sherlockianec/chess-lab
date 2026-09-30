@@ -1227,3 +1227,8 @@ input[type='range'] {
     padding: 14px;
   }
 }
+
+/* The keyboard tip is only useful with a physical keyboard. */
+@media (max-width: 900px), (hover: none) {
+  .review-keys-hint { display: none; }
+}
