@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import {
   EMPTY_FEN,
-  EMPTY_PLACEMENT,
   START_FEN,
   buildFen,
   hasCastlingRight,
@@ -49,9 +48,6 @@ export default function PositionEditor({ fen, onChange, onResetToInitial, valida
         </button>
         <button type="button" className="btn btn--preset btn--preset--empty" onClick={() => onChange(EMPTY_FEN)}>
           <span className="btn-icon" aria-hidden="true">▢</span> Empty board
-        </button>
-        <button type="button" className="btn btn--preset btn--preset--clear" onClick={() => setField({ placement: EMPTY_PLACEMENT })}>
-          <span className="btn-icon" aria-hidden="true">✕</span> Clear pieces
         </button>
         <button type="button" className="btn btn--preset btn--preset--reset" onClick={onResetToInitial}>
           <span className="btn-icon" aria-hidden="true">↺</span> Reset

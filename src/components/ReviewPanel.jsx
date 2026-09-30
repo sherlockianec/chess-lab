@@ -18,13 +18,23 @@ export default function ReviewPanel({
 }) {
   const [copyLabel, setCopyLabel] = useState('Copy PGN')
   const currentMoveRef = useRef(null)
+  const listRef = useRef(null)
   const sanList = positions.slice(1).map((p) => p.san)
 
   const summary = useMemo(() => summarizeByColor(positions, classifications), [positions, classifications])
   const currentMoveQuality = classifications[index]
 
   useEffect(() => {
-    currentMoveRef.current?.scrollIntoView({ block: 'nearest' })
+    // Scroll only the move list itself. scrollIntoView() would also scroll the
+    // whole page on mobile (the list sits below the fold), which made the
+    // Prev/Next buttons jump away from under the thumb.
+    const list = listRef.current
+    const el = currentMoveRef.current
+    if (!list || !el) return
+    const l = list.getBoundingClientRect()
+    const e = el.getBoundingClientRect()
+    if (e.top < l.top) list.scrollTop -= l.top - e.top
+    else if (e.bottom > l.bottom) list.scrollTop += e.bottom - l.bottom
   }, [index])
 
   const pairs = []
@@ -80,7 +90,7 @@ export default function ReviewPanel({
             <span className="hint-text hint-text--muted">Analyzing this move…</span>
           )}
         </div>
-        <div className="button-row" style={{ marginTop: 10 }}>
+        <div className="review-nav" role="group" aria-label="Step through moves">
           <button type="button" className="btn btn--ghost" onClick={onPrev} disabled={index === 0}>
             ◂ Prev
           </button>
@@ -121,7 +131,7 @@ export default function ReviewPanel({
         {pairs.length === 0 ? (
           <p className="hint-text">No moves in this game.</p>
         ) : (
-          <ol className="move-history__list move-history__list--review">
+          <ol ref={listRef} className="move-history__list move-history__list--review">
             {pairs.map((p) => (
               <li key={p.number} ref={index === p.white.ply || index === p.black?.ply ? currentMoveRef : null}>
                 <span className="move-history__num">{p.number}.</span>
@@ -157,7 +167,7 @@ export default function ReviewPanel({
             {copyLabel}
           </button>
         </div>
-        <button type="button" className="btn btn--primary btn--large" onClick={onExit}>
+        <button type="button" className="btn btn--primary btn--large btn--inline" onClick={onExit}>
           Back to setup
         </button>
       </section>

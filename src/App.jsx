@@ -469,7 +469,7 @@ export default function App() {
         </button>
       </header>
 
-      <main className="app-main">
+      <main className={`app-main${phase === 'setup' ? ' app-main--setup' : ''}`}>
         <div className="board-column">
           <CapturedPiecesBar
             material={material}
@@ -563,15 +563,20 @@ export default function App() {
           )}
         </div>
 
-        <aside className="side-panel">
+        {phase === 'setup' && (
+          <aside className="side-panel side-panel--setup side-panel--left" aria-label="Position setup">
+            <PositionEditor
+              fen={settings.editorFen}
+              onChange={handleEditorFenChange}
+              onResetToInitial={handleResetEditor}
+              validationError={validationError}
+            />
+          </aside>
+        )}
+
+        <aside className={`side-panel${phase === 'setup' ? ' side-panel--setup side-panel--right' : ''}`} aria-label={phase === 'setup' ? 'Game setup' : undefined}>
           {phase === 'setup' && (
             <>
-              <PositionEditor
-                fen={settings.editorFen}
-                onChange={handleEditorFenChange}
-                onResetToInitial={handleResetEditor}
-                validationError={validationError}
-              />
               <div className="panel-columns">
                 <PlayerPanel
                   playerColor={settings.playerColor}

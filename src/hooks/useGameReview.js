@@ -14,7 +14,7 @@ export function useGameReview() {
 
   const load = useCallback((positionsArray, loadedHeaders = null) => {
     setPositions(positionsArray)
-    setIndex(positionsArray.length - 1)
+    setIndex(0) // always start the walkthrough at the first position
     setEvals({})
     setHeaders(loadedHeaders)
   }, [])
